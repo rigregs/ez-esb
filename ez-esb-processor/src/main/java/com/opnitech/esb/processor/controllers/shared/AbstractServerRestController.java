@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.controllers;
+package com.opnitech.esb.processor.controllers.shared;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public abstract class AbstractServerRestController {
     private <DtoType> ResponseEntity<DtoType> buildResponse(DtoType dto, HttpStatus status) {
 
         return dto != null
-                ? new ResponseEntity<DtoType>(dto, status)
+                ? new ResponseEntity<>(dto, status)
                 : new ResponseEntity<DtoType>(status);
     }
 }

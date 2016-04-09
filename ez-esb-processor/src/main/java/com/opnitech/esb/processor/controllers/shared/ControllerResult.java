@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.controllers;
+package com.opnitech.esb.processor.controllers.shared;
 
 import java.io.Serializable;
 

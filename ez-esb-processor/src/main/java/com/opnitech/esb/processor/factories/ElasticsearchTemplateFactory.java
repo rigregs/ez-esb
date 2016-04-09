@@ -17,6 +17,7 @@ public class ElasticsearchTemplateFactory {
         // Default constructor
     }
 
+    @SuppressWarnings("resource")
     @Bean
     public ElasticsearchTemplate getElasticsearchTemplate() {
 
@@ -24,6 +25,8 @@ public class ElasticsearchTemplateFactory {
 
         Client client = node.client();
 
-        return new ElasticsearchTemplate(client);
+        ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(client);
+        
+        return elasticsearchTemplate;
     }
 }
