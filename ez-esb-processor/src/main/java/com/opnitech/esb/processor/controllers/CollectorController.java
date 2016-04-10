@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opnitech.esb.processor.controllers.shared.AbstractServerRestController;
 import com.opnitech.esb.processor.controllers.shared.ControllerResult;
-import com.opnitech.esb.processor.model.ElasticIndexMetadata;
-import com.opnitech.esb.processor.services.document.DocumentIndexerService;
+import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
+import com.opnitech.esb.processor.services.DocumentIndexerService;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

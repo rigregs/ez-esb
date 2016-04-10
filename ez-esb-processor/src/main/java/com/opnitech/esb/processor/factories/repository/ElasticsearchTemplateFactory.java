@@ -1,6 +1,7 @@
-package com.opnitech.esb.processor.factories;
+package com.opnitech.esb.processor.factories.repository;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.inject.Singleton;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ public class ElasticsearchTemplateFactory {
 
     @SuppressWarnings("resource")
     @Bean
+    @Singleton
     public ElasticsearchTemplate getElasticsearchTemplate() {
 
         Node node = NodeBuilder.nodeBuilder().clusterName("incentives-services").client(true).node();
@@ -26,7 +28,7 @@ public class ElasticsearchTemplateFactory {
         Client client = node.client();
 
         ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(client);
-        
+
         return elasticsearchTemplate;
     }
 }

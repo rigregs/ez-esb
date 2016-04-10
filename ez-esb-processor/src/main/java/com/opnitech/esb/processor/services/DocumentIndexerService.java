@@ -1,6 +1,6 @@
-package com.opnitech.esb.processor.services.document;
+package com.opnitech.esb.processor.services;
 
-import com.opnitech.esb.processor.model.ElasticIndexMetadata;
+import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

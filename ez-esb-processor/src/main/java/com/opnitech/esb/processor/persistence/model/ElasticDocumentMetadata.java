@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.model;
+package com.opnitech.esb.processor.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,9 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ElasticDocumentMetadata {
-
-    private String id;
+public class ElasticDocumentMetadata extends ElasticDocument {
 
     private String elasticDocumentId;
     private String documentId;
@@ -39,16 +37,6 @@ public class ElasticDocumentMetadata {
     public void setElasticDocumentId(String elasticDocumentId) {
 
         this.elasticDocumentId = elasticDocumentId;
-    }
-
-    public String getId() {
-
-        return this.id;
-    }
-
-    public void setId(String id) {
-
-        this.id = id;
     }
 
     public String getDocumentCheckSum() {
