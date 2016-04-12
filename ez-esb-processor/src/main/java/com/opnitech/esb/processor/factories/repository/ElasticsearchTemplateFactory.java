@@ -1,9 +1,10 @@
 package com.opnitech.esb.processor.factories.repository;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.inject.Singleton;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -14,6 +15,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 @Configuration
 public class ElasticsearchTemplateFactory {
 
+    private static final String CLIENT_TRANSPORT_SNIFF = "client.transport.sniff";
+    private static final String CLUSTER_NAME = "cluster.name";
+
     public ElasticsearchTemplateFactory() {
         // Default constructor
     }
@@ -23,9 +27,11 @@ public class ElasticsearchTemplateFactory {
     @Singleton
     public ElasticsearchTemplate getElasticsearchTemplate() {
 
-        Node node = NodeBuilder.nodeBuilder().clusterName("incentives-services").client(true).node();
+        final Settings settings = ImmutableSettings.settingsBuilder().put(CLUSTER_NAME, "incentives-services")
+                .put(CLIENT_TRANSPORT_SNIFF, false).build();
+        final TransportClient client = new TransportClient(settings);
 
-        Client client = node.client();
+        client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
         ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(client);
 

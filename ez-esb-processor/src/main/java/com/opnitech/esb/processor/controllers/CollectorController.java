@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opnitech.esb.processor.controllers.shared.AbstractServerRestController;
 import com.opnitech.esb.processor.controllers.shared.ControllerResult;
-import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 
 /**
@@ -29,11 +28,12 @@ public class CollectorController extends AbstractServerRestController {
         // Default constructor
     }
 
-    @RequestMapping(value = "/{version}/{document}/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{version}/{documentType}/{documentId}", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<ControllerResult> updateDocument(@PathVariable String version,
-            @PathVariable String document, @PathVariable String id, @RequestBody String documentAsJSON) {
+            @PathVariable String documentType, @PathVariable String documentId, @RequestBody String documentAsJSON) {
 
-        this.documentIndexerService.updateDocument(new ElasticIndexMetadata(version, document), id, documentAsJSON);
+        this.documentIndexerService.queueUpdateDocument(version, documentType, documentId, documentAsJSON);
+
 
         return buildSuccessControllerResultResponse();
     }

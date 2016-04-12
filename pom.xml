@@ -60,6 +60,7 @@
 		<!-- Camel -->
 		<camel-spring-boot.version>2.17.0</camel-spring-boot.version>
 		<camel-rabbitmq.version>2.17.0</camel-rabbitmq.version>
+		<camel-jackson.version>2.17.0</camel-jackson.version>
 	</properties>
 
 	<dependencyManagement>
@@ -238,6 +239,12 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-rabbitmq</artifactId>
 				<version>${camel-rabbitmq.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jackson</artifactId>
+				<version>${camel-jackson.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

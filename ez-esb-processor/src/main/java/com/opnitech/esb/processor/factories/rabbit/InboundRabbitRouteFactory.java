@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.processor.configuration.PropertyPlaceholder;
+import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
@@ -24,6 +25,8 @@ public class InboundRabbitRouteFactory {
         // Default constructor
     }
 
+    @Bean
+    @Singleton
     public RouteBuilder getInboundSendRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
         RouteBuilder routeBuilder = RouteBuilderUtil.createSendRabbitRouteBuilder("inboundSend",
@@ -37,9 +40,9 @@ public class InboundRabbitRouteFactory {
     public RouteBuilder getInboundReceiveRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
         RouteBuilder routeBuilder = RouteBuilderUtil.createReceiveRabbitRouteBuilder("inboundMessageConsumer",
-                propertyPlaceholder.getInboundRoute());
+                propertyPlaceholder.getInboundRoute(), DocumentCRUDCommand.class);
 
         return routeBuilder;
     }
-    
+
 }

@@ -4,14 +4,17 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
-import com.opnitech.esb.processor.persistence.model.ElasticDocumentMetadata;
+import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.model.elastic.ElasticDocumentMetadata;
 import com.opnitech.esb.processor.persistence.repository.ElasticIndexMetadataRepository;
 import com.opnitech.esb.processor.persistence.repository.queries.DocumentRepository;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.utils.CheckSumUtil;
+import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -22,20 +25,45 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
     private final DocumentRepository documentRepository;
     private final ElasticIndexMetadataRepository elasticIndexMetadataRepository;
+    private final ProducerTemplate producerTemplate;
 
     public DocumentIndexerServiceImpl(DocumentRepository documentRepository,
-            ElasticIndexMetadataRepository elasticIndexMetadataRepository) {
+            ElasticIndexMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate) {
 
         this.documentRepository = documentRepository;
         this.elasticIndexMetadataRepository = elasticIndexMetadataRepository;
+        this.producerTemplate = producerTemplate;
     }
 
     @Override
-    public void updateDocument(ElasticIndexMetadata elasticIndexMetadata, String id, String documentAsJSON) {
+    public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON) {
+
+        DocumentCRUDCommand documentCRUDCommand = new DocumentCRUDCommand();
+        documentCRUDCommand.setDocumentId(documentId);
+        documentCRUDCommand.setVersion(version);
+        documentCRUDCommand.setDocumentType(documentType);
+        documentCRUDCommand.setDocumentAsJSON(documentAsJSON);
+
+        ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
+                documentCRUDCommand.getDocumentType());
 
         guaranteeIndexExists(elasticIndexMetadata);
 
-        ElasticDocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata, id);
+        this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("inboundSend"), documentCRUDCommand);
+    }
+
+    @Override
+    public void updateDocument(DocumentCRUDCommand documentCRUDCommand) {
+
+        ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
+                documentCRUDCommand.getDocumentType());
+
+        guaranteeIndexExists(elasticIndexMetadata);
+
+        ElasticDocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
+                documentCRUDCommand.getDocumentId());
+
+        String documentAsJSON = documentCRUDCommand.getDocumentAsJSON();
 
         String documentCheckSum = CheckSumUtil.checkSum(documentAsJSON);
         if (!Objects.equals(documentCheckSum, elasticDocumentMetadata.getDocumentCheckSum())) {

@@ -16,7 +16,7 @@ public class ElasticIndexMetadata {
     private static final String ESB_DOCUMENT_TYPE_FORMAT = "document";
 
     private String version;
-    private String document;
+    private String documentType;
 
     private String indexName;
     private String metadataTypeName;
@@ -28,12 +28,12 @@ public class ElasticIndexMetadata {
         // Default constructor
     }
 
-    public ElasticIndexMetadata(String version, String document) {
+    public ElasticIndexMetadata(String version, String documentType) {
 
         this.version = version;
-        this.document = document;
+        this.documentType = documentType;
 
-        this.indexName = StringUtils.lowerCase(MessageFormat.format(ESB_INDEX_FORMAT, this.document, this.version));
+        this.indexName = StringUtils.lowerCase(MessageFormat.format(ESB_INDEX_FORMAT, this.documentType, this.version));
         this.metadataTypeName = ESB_METADATA_TYPE_FORMAT;
         this.documentTypeName = ESB_DOCUMENT_TYPE_FORMAT;
     }
@@ -41,7 +41,7 @@ public class ElasticIndexMetadata {
     @Override
     public int hashCode() {
 
-        return new HashCodeBuilder().append(this.version).append(this.document).toHashCode();
+        return new HashCodeBuilder().append(this.version).append(this.documentType).toHashCode();
     }
 
     @Override
@@ -53,7 +53,8 @@ public class ElasticIndexMetadata {
 
         ElasticIndexMetadata other = (ElasticIndexMetadata) obj;
 
-        return new EqualsBuilder().append(this.version, other.getVersion()).append(this.document, other.getDocument()).isEquals();
+        return new EqualsBuilder().append(this.version, other.getVersion()).append(this.documentType, other.getDocumentType())
+                .isEquals();
     }
 
     public String getVersion() {
@@ -66,14 +67,14 @@ public class ElasticIndexMetadata {
         this.version = version;
     }
 
-    public String getDocument() {
+    public String getDocumentType() {
 
-        return this.document;
+        return this.documentType;
     }
 
-    public void setDocument(String document) {
+    public void setDocumentType(String documentType) {
 
-        this.document = document;
+        this.documentType = documentType;
     }
 
     public String getIndexName() {

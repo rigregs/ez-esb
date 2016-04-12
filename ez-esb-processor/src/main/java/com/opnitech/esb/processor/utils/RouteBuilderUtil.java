@@ -3,6 +3,7 @@ package com.opnitech.esb.processor.utils;
 import java.text.MessageFormat;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 import com.opnitech.esb.processor.routes.configuration.RabbitRouteConfiguration;
 
@@ -16,15 +17,9 @@ public final class RouteBuilderUtil {
     }
 
     public static RouteBuilder createReceiveRabbitRouteBuilder(final String beanName,
-            RabbitRouteConfiguration rabbitRouteConfiguration) {
+            RabbitRouteConfiguration rabbitRouteConfiguration, final Class<?> unmarshalClass) {
 
-        final String fromRouteURI = MessageFormat.format(
-                "rabbitmq://{0}:{1}/{2}?username={3}&password={4}&threadPoolSize={5}&routingKey={6}&queue={7}&vhost={8}&autoDelete={9}",
-                rabbitRouteConfiguration.getHost(), Integer.toString(rabbitRouteConfiguration.getPort()),
-                rabbitRouteConfiguration.getExchangeName(), rabbitRouteConfiguration.getUsername(),
-                rabbitRouteConfiguration.getPassword(), Integer.toString(rabbitRouteConfiguration.getThreadPoolSize()),
-                rabbitRouteConfiguration.getRoutingKey(), rabbitRouteConfiguration.getQueue(),
-                rabbitRouteConfiguration.getVhost(), rabbitRouteConfiguration.isAutoDelete());
+        final String fromRouteURI = buildRabbitRoute(rabbitRouteConfiguration);
 
         final String toRouteURI = MessageFormat.format("bean:{0}", beanName);
 
@@ -33,7 +28,8 @@ public final class RouteBuilderUtil {
             @Override
             public void configure() throws Exception {
 
-                from(fromRouteURI).autoStartup(true).log("Raw message from queue:\n${body}").to(toRouteURI);
+                from(fromRouteURI).log("Raw message from queue:\n${body}").unmarshal().json(JsonLibrary.Jackson, unmarshalClass)
+                        .to(toRouteURI);
             }
         };
 
@@ -43,22 +39,37 @@ public final class RouteBuilderUtil {
     public static RouteBuilder createSendRabbitRouteBuilder(final String fromURI,
             RabbitRouteConfiguration rabbitRouteConfiguration) {
 
-        final String fromRouteURI = MessageFormat.format("direct:{0}", fromURI);
+        final String fromRouteURI = fromDirect(fromURI);
 
-        final String toRouteURI = MessageFormat.format("rabbitmq://{0}:{1}/{2}?username={3}&password={4}&threadPoolSize={5}",
-                rabbitRouteConfiguration.getHost(), Integer.toString(rabbitRouteConfiguration.getPort()),
-                rabbitRouteConfiguration.getExchangeName(), rabbitRouteConfiguration.getUsername(),
-                rabbitRouteConfiguration.getPassword(), Integer.toString(rabbitRouteConfiguration.getThreadPoolSize()));
+        final String toRouteURI = buildRabbitRoute(rabbitRouteConfiguration);
 
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
 
-                from(fromRouteURI).to(toRouteURI);
+                from(fromRouteURI).marshal().json(JsonLibrary.Jackson).log("CRUD:\n${body}").to(toRouteURI);
             }
         };
 
         return routeBuilder;
+    }
+
+    public static String fromDirect(final String directId) {
+
+        return MessageFormat.format("direct:{0}", directId);
+    }
+
+    private static String buildRabbitRoute(RabbitRouteConfiguration rabbitRouteConfiguration) {
+
+        final String routeURI = MessageFormat.format(
+                "rabbitmq://{0}:{1}/{2}?username={3}&password={4}&threadPoolSize={5}&routingKey={6}&queue={7}&vhost={8}&autoDelete={9}",
+                rabbitRouteConfiguration.getHost(), Integer.toString(rabbitRouteConfiguration.getPort()),
+                rabbitRouteConfiguration.getExchangeName(), rabbitRouteConfiguration.getUsername(),
+                rabbitRouteConfiguration.getPassword(), Integer.toString(rabbitRouteConfiguration.getThreadPoolSize()),
+                rabbitRouteConfiguration.getRoutingKey(), rabbitRouteConfiguration.getQueue(),
+                rabbitRouteConfiguration.getVhost(), rabbitRouteConfiguration.isAutoDelete());
+
+        return routeURI;
     }
 }

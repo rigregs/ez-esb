@@ -1,5 +1,6 @@
 package com.opnitech.esb.processor.persistence.repository;
 
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +9,7 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
-import com.opnitech.esb.processor.persistence.model.ElasticDocument;
+import com.opnitech.esb.processor.persistence.model.elastic.ElasticDocument;
 import com.opnitech.esb.processor.persistence.repository.queries.ElasticExecutionQueryBuilder;
 import com.opnitech.esb.processor.persistence.repository.queries.ElasticQueryBuilder;
 import com.opnitech.esb.processor.utils.JSONUtil;
@@ -52,8 +53,10 @@ public class ElasticRepository {
 
     public String insertDocument(String indexName, String type, String objectAsJSON) {
 
-        IndexResponse response = this.elasticsearchTemplate.getClient().prepareIndex(indexName, type).setSource(objectAsJSON)
-                .get();
+        IndexRequestBuilder indexRequestBuilder = this.elasticsearchTemplate.getClient().prepareIndex(indexName, type)
+                .setSource(objectAsJSON);
+
+        IndexResponse response = indexRequestBuilder.get();
 
         return response.getId();
     }

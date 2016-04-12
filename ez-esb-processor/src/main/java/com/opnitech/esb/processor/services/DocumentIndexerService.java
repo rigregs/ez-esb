@@ -1,11 +1,13 @@
 package com.opnitech.esb.processor.services;
 
-import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
+import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 public interface DocumentIndexerService {
 
-    void updateDocument(ElasticIndexMetadata elasticIndexMetadata, String id, String documentAsJSON);
+    void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON);
+
+    void updateDocument(DocumentCRUDCommand documentCRUDCommand);
 }

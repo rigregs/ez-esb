@@ -1,5 +1,6 @@
 package com.opnitech.esb.processor.factories.services;
 
+import org.apache.camel.ProducerTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,8 +21,8 @@ public class DocumentIndexerServiceFactory {
 
     @Bean(name = "documentIndexerService")
     public DocumentIndexerService getDocumentIndexerService(DocumentRepository documentRepository,
-            ElasticIndexMetadataRepository elasticIndexMetadataRepository) {
+            ElasticIndexMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate) {
 
-        return new DocumentIndexerServiceImpl(documentRepository, elasticIndexMetadataRepository);
+        return new DocumentIndexerServiceImpl(documentRepository, elasticIndexMetadataRepository, producerTemplate);
     }
 }
