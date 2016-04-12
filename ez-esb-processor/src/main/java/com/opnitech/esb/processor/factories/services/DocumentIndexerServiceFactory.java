@@ -18,7 +18,7 @@ public class DocumentIndexerServiceFactory {
         // Default constructor
     }
 
-    @Bean
+    @Bean(name = "documentIndexerService")
     public DocumentIndexerService getDocumentIndexerService(DocumentRepository documentRepository,
             ElasticIndexMetadataRepository elasticIndexMetadataRepository) {
 

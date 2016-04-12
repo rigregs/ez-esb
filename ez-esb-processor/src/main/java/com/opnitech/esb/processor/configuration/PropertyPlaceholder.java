@@ -1,34 +1,36 @@
 package com.opnitech.esb.processor.configuration;
 
+import com.opnitech.esb.processor.routes.configuration.RabbitRouteConfiguration;
+
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 public class PropertyPlaceholder {
 
-    private RabbitConfiguration inboundRabbitConfiguration;
-    private RabbitConfiguration outboundRabbitConfiguration;
+    private RabbitRouteConfiguration inboundRoute;
+    private RabbitRouteConfiguration outboundRoute;
 
     public PropertyPlaceholder() {
         // Default constructor
     }
 
-    public RabbitConfiguration getInboundRabbitConfiguration() {
+    public RabbitRouteConfiguration getInboundRoute() {
 
-        return this.inboundRabbitConfiguration;
+        return this.inboundRoute;
     }
 
-    public void setInboundRabbitConfiguration(RabbitConfiguration inboundRabbitConfiguration) {
+    public void setInboundRoute(RabbitRouteConfiguration inboundRoute) {
 
-        this.inboundRabbitConfiguration = inboundRabbitConfiguration;
+        this.inboundRoute = inboundRoute;
     }
 
-    public RabbitConfiguration getOutboundRabbitConfiguration() {
+    public RabbitRouteConfiguration getOutboundRoute() {
 
-        return this.outboundRabbitConfiguration;
+        return this.outboundRoute;
     }
 
-    public void setOutboundRabbitConfiguration(RabbitConfiguration outboundRabbitConfiguration) {
+    public void setOutboundRoute(RabbitRouteConfiguration outboundRoute) {
 
-        this.outboundRabbitConfiguration = outboundRabbitConfiguration;
+        this.outboundRoute = outboundRoute;
     }
 }
