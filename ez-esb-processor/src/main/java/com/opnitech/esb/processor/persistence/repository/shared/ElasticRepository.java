@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
-import com.opnitech.esb.processor.persistence.model.elastic.ElasticDocument;
+import com.opnitech.esb.processor.persistence.model.document.ElasticDocument;
 import com.opnitech.esb.processor.persistence.repository.shared.queries.ElasticExecutionQueryBuilder;
 import com.opnitech.esb.processor.persistence.repository.shared.queries.ElasticQueryBuilder;
 import com.opnitech.esb.processor.utils.JSONUtil;

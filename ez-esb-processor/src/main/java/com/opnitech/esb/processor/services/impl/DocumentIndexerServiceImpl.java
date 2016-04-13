@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
 import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
-import com.opnitech.esb.processor.persistence.model.elastic.ElasticDocumentMetadata;
+import com.opnitech.esb.processor.persistence.model.document.ElasticDocumentMetadata;
 import com.opnitech.esb.processor.persistence.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.repository.document.ElasticIndexMetadataRepository;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
