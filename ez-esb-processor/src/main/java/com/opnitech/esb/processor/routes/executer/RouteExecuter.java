@@ -1,6 +1,6 @@
 package com.opnitech.esb.processor.routes.executer;
 
-import com.opnitech.esb.processor.routes.configuration.RouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

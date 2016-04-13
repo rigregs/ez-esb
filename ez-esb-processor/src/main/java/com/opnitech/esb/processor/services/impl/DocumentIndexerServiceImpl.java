@@ -1,5 +1,6 @@
 package com.opnitech.esb.processor.services.impl;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,6 +21,8 @@ import com.opnitech.esb.processor.utils.RouteBuilderUtil;
  * @author Rigre Gregorio Garciandia Sonora
  */
 public class DocumentIndexerServiceImpl implements DocumentIndexerService {
+
+    private static final int MIN_SEQUECE_LENGHT = 20;
 
     private final Set<ElasticIndexMetadata> elasticIndexMetadatas = new HashSet<>();
 
@@ -44,16 +47,28 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         documentCRUDCommand.setDocumentType(documentType);
         documentCRUDCommand.setDocumentAsJSON(documentAsJSON);
 
-        ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
-                documentCRUDCommand.getDocumentType());
-
-        guaranteeIndexExists(elasticIndexMetadata);
+        updateSequence(documentCRUDCommand);
 
         this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("inboundSend"), documentCRUDCommand);
     }
 
+    private void updateSequence(DocumentCRUDCommand documentCRUDCommand) {
+
+        if (StringUtils.isBlank(documentCRUDCommand.getSequence())) {
+
+            String sequenceMillis = StringUtils.leftPad(Long.toString(System.currentTimeMillis()), MIN_SEQUECE_LENGHT, "0");
+            String sequenceNano = StringUtils.leftPad(Long.toString(System.nanoTime()), MIN_SEQUECE_LENGHT, "0");
+
+            String sequence = MessageFormat.format("{0}-{1}", sequenceMillis, sequenceNano);
+
+            documentCRUDCommand.setSequence(sequence);
+        }
+    }
+
     @Override
     public void updateDocument(DocumentCRUDCommand documentCRUDCommand) {
+
+        updateSequence(documentCRUDCommand);
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
                 documentCRUDCommand.getDocumentType());
@@ -62,6 +77,20 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
         ElasticDocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
                 documentCRUDCommand.getDocumentId());
+
+        String newDocumentSequence = StringUtils.trimToEmpty(documentCRUDCommand.getSequence());
+        String oldDocumentSequence = StringUtils.trimToEmpty(elasticDocumentMetadata.getSequnce());
+
+        if (newDocumentSequence.compareTo(oldDocumentSequence) >= 0) {
+
+            processDocument(documentCRUDCommand, elasticIndexMetadata, elasticDocumentMetadata);
+        }
+    }
+
+    private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
+            ElasticDocumentMetadata elasticDocumentMetadata) {
+
+        elasticDocumentMetadata.setSequnce(documentCRUDCommand.getSequence());
 
         String documentAsJSON = documentCRUDCommand.getDocumentAsJSON();
 

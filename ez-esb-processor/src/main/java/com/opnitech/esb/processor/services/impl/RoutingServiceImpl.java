@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 
-import com.opnitech.esb.processor.routes.configuration.RouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 import com.opnitech.esb.processor.routes.executer.RouteExecuter;
 import com.opnitech.esb.processor.services.RoutingService;
 import com.opnitech.esb.processor.utils.JSONUtil;

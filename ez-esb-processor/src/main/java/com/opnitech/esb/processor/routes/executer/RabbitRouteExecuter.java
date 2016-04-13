@@ -3,8 +3,8 @@ package com.opnitech.esb.processor.routes.executer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.opnitech.esb.processor.routes.configuration.RabbitRouteConfiguration;
-import com.opnitech.esb.processor.routes.configuration.RouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RabbitRouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

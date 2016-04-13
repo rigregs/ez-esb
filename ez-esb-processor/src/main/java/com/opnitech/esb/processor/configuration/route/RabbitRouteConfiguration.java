@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.routes.configuration;
+package com.opnitech.esb.processor.configuration.route;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

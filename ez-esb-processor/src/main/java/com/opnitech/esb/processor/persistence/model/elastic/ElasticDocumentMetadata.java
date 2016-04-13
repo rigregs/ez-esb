@@ -14,6 +14,8 @@ public class ElasticDocumentMetadata extends ElasticDocument {
     private String elasticDocumentId;
     private String documentId;
     private String documentCheckSum;
+    
+    private String sequnce;
 
     public ElasticDocumentMetadata() {
         // Default constructor
@@ -47,5 +49,15 @@ public class ElasticDocumentMetadata extends ElasticDocument {
     public void setDocumentCheckSum(String documentCheckSum) {
 
         this.documentCheckSum = documentCheckSum;
+    }
+
+    public String getSequnce() {
+
+        return this.sequnce;
+    }
+
+    public void setSequnce(String sequnce) {
+
+        this.sequnce = sequnce;
     }
 }

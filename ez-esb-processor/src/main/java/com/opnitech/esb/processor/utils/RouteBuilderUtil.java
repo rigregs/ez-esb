@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
-import com.opnitech.esb.processor.routes.configuration.RabbitRouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RabbitRouteConfiguration;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

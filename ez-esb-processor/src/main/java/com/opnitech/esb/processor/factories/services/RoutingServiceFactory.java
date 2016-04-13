@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.opnitech.esb.processor.routes.configuration.RouteConfiguration;
+import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 import com.opnitech.esb.processor.routes.executer.RouteExecuter;
 import com.opnitech.esb.processor.services.RoutingService;
 import com.opnitech.esb.processor.services.impl.RoutingServiceImpl;

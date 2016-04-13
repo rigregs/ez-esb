@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.routes.configuration;
+package com.opnitech.esb.processor.configuration.route;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

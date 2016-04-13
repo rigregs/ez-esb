@@ -18,6 +18,8 @@ public class DocumentCRUDCommand {
     private String documentAsJSON;
     private CRUDActionEnum action;
 
+    private String sequence;
+
     public DocumentCRUDCommand() {
         // Default constructor
     }
@@ -70,5 +72,15 @@ public class DocumentCRUDCommand {
     public void setVersion(String version) {
 
         this.version = version;
+    }
+
+    public String getSequence() {
+
+        return this.sequence;
+    }
+
+    public void setSequence(String sequence) {
+
+        this.sequence = sequence;
     }
 }
