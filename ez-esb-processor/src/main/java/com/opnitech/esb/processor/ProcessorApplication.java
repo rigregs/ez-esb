@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -19,7 +20,8 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         VelocityAutoConfiguration.class
     })
 @ComponentScan
-@EnableElasticsearchRepositories
+@EnableJpaRepositories(basePackages = "com.opnitech.esb.processor.persistence.jpa")
+@EnableElasticsearchRepositories(basePackages = "com.opnitech.esb.processor.persistence.elastic")
 @Profile("default")
 public class ProcessorApplication extends SpringBootServletInitializer {
 

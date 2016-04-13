@@ -8,11 +8,11 @@ import java.util.Set;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
-import com.opnitech.esb.processor.persistence.index.ElasticIndexMetadata;
-import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
-import com.opnitech.esb.processor.persistence.model.document.ElasticDocumentMetadata;
-import com.opnitech.esb.processor.persistence.repository.document.DocumentRepository;
-import com.opnitech.esb.processor.persistence.repository.document.ElasticIndexMetadataRepository;
+import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.elastic.model.document.ElasticDocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.ElasticIndexMetadataRepository;
+import com.opnitech.esb.processor.persistence.shared.ElasticIndexMetadata;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.utils.CheckSumUtil;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;

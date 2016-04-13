@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.index;
+package com.opnitech.esb.processor.persistence.shared;
 
 import java.text.MessageFormat;
 

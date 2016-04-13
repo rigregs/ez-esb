@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.repository.shared.queries;
+package com.opnitech.esb.processor.persistence.elastic.repository.shared.queries;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.data.domain.PageRequest;

@@ -1,8 +1,8 @@
-package com.opnitech.esb.processor.persistence.repository.document;
+package com.opnitech.esb.processor.persistence.elastic.repository.document;
 
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
-import com.opnitech.esb.processor.persistence.repository.shared.ElasticRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.shared.ElasticRepository;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

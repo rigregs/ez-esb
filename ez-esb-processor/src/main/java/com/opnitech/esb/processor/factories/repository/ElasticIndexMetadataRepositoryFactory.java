@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
-import com.opnitech.esb.processor.persistence.repository.document.ElasticIndexMetadataRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.ElasticIndexMetadataRepository;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.processor.configuration.PropertyPlaceholder;
-import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**

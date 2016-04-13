@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.model.command;
+package com.opnitech.esb.processor.persistence.elastic.model.command;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

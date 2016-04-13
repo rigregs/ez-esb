@@ -1,6 +1,6 @@
 package com.opnitech.esb.processor.services;
 
-import com.opnitech.esb.processor.persistence.model.command.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

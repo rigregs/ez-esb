@@ -4,8 +4,8 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.opnitech.esb.processor.persistence.repository.document.DocumentRepository;
-import com.opnitech.esb.processor.persistence.repository.document.ElasticIndexMetadataRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.ElasticIndexMetadataRepository;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.services.impl.DocumentIndexerServiceImpl;
 
