@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class ElasticIndexMetadata {
 
-    private static final String ESB_INDEX_FORMAT = "esb-{0}-v{1}-document";
+    private static final String ESB_INDEX_FORMAT = "esb-{0}-{1}-document";
     private static final String ESB_METADATA_TYPE_FORMAT = "metadata";
     private static final String ESB_DOCUMENT_TYPE_FORMAT = "document";
 
