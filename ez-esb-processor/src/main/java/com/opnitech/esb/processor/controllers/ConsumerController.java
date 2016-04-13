@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,28 +12,27 @@ import org.springframework.web.bind.annotation.RestController;
 import com.opnitech.esb.processor.common.ServiceException;
 import com.opnitech.esb.processor.controllers.shared.AbstractServerRestController;
 import com.opnitech.esb.processor.controllers.shared.ControllerResult;
-import com.opnitech.esb.processor.services.DocumentIndexerService;
+import com.opnitech.esb.processor.services.ConsumerService;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 @RestController
-@RequestMapping(value = "/rest/api/v1/collector/", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CollectorController extends AbstractServerRestController {
+@RequestMapping(value = "/rest/api/v1/consumer/", produces = MediaType.APPLICATION_JSON_VALUE)
+public class ConsumerController extends AbstractServerRestController {
 
     @Autowired
-    private DocumentIndexerService documentIndexerService;
+    private ConsumerService consumerService;
 
-    public CollectorController() {
+    public ConsumerController() {
         // Default constructor
     }
 
-    @RequestMapping(value = "/{version}/{documentType}/{documentId}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<ControllerResult> updateDocument(@PathVariable String version,
-            @PathVariable String documentType, @PathVariable String documentId, @RequestBody String documentAsJSON)
-                    throws ServiceException {
+    @RequestMapping(value = "/synch-match-query/{customerId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<ControllerResult> synchConsumerConfiguration(@PathVariable long customerId)
+            throws ServiceException {
 
-        this.documentIndexerService.queueUpdateDocument(version, documentType, documentId, documentAsJSON);
+        this.consumerService.synchConsumerConfiguration(customerId);
 
         return buildSuccessControllerResultResponse();
     }

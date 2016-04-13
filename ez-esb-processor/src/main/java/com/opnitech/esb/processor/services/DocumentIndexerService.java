@@ -1,5 +1,6 @@
 package com.opnitech.esb.processor.services;
 
+import com.opnitech.esb.processor.common.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
 
 /**
@@ -7,7 +8,8 @@ import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUD
  */
 public interface DocumentIndexerService {
 
-    void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON);
+    void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON)
+            throws ServiceException;
 
-    void updateDocument(DocumentCRUDCommand documentCRUDCommand);
+    void updateDocument(DocumentCRUDCommand documentCRUDCommand) throws ServiceException;
 }

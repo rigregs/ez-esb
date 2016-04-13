@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DocumentCRUDCommand {
+public class DocumentCRUDCommand extends Command {
+
+    private static final long serialVersionUID = -6894247249612121598L;
 
     private String documentType;
     private String documentId;

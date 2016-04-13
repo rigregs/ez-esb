@@ -1,5 +1,6 @@
 package com.opnitech.esb.processor.persistence.elastic.repository.shared;
 
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -51,7 +52,21 @@ public class ElasticRepository {
         return document;
     }
 
-    public String insertDocument(String indexName, String type, String objectAsJSON) {
+    public String save(String indexName, String type, String elasticId, String objectAsJSON) {
+
+        String elasticIdToUse = elasticId;
+
+        if (StringUtils.isBlank(elasticIdToUse)) {
+            elasticIdToUse = insertDocument(indexName, type, objectAsJSON);
+        }
+        else {
+            updateDocument(indexName, type, elasticIdToUse, objectAsJSON);
+        }
+
+        return elasticIdToUse;
+    }
+
+    private String insertDocument(String indexName, String type, String objectAsJSON) {
 
         IndexRequestBuilder indexRequestBuilder = this.elasticsearchTemplate.getClient().prepareIndex(indexName, type)
                 .setSource(objectAsJSON);
@@ -61,9 +76,9 @@ public class ElasticRepository {
         return response.getId();
     }
 
-    public void updateDocument(String indexName, String type, String id, String objectAsJSON) {
+    private void updateDocument(String indexName, String type, String id, String objectAsJSON) {
 
-        this.elasticsearchTemplate.getClient().prepareIndex(indexName, type, id).setSource(objectAsJSON).get();
+        this.elasticsearchTemplate.getClient().prepareIndex(indexName, type, id).setSource(objectAsJSON).setRefresh(true).get();
     }
 
     protected <E, R> E executeQuery(String indexName, String type, ElasticQueryBuilder<R> queryBuilder,

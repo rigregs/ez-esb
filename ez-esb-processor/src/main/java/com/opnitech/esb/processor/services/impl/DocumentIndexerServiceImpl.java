@@ -96,15 +96,9 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
         String documentCheckSum = CheckSumUtil.checkSum(documentAsJSON);
         if (!Objects.equals(documentCheckSum, elasticDocumentMetadata.getDocumentCheckSum())) {
-            String elasticDocumentId = elasticDocumentMetadata.getElasticDocumentId();
-            if (StringUtils.isBlank(elasticDocumentId)) {
-                elasticDocumentId = this.documentRepository.insertDocument(elasticIndexMetadata.getIndexName(),
-                        elasticIndexMetadata.getDocumentTypeName(), documentAsJSON);
-            }
-            else {
-                this.documentRepository.updateDocument(elasticIndexMetadata.getIndexName(),
-                        elasticIndexMetadata.getDocumentTypeName(), elasticDocumentId, documentAsJSON);
-            }
+
+            String elasticDocumentId = this.documentRepository.save(elasticIndexMetadata.getIndexName(),
+                    elasticIndexMetadata.getDocumentTypeName(), elasticDocumentMetadata.getElasticDocumentId(), documentAsJSON);
 
             updateElasticDocumentMetadata(elasticIndexMetadata, elasticDocumentMetadata, documentCheckSum, elasticDocumentId);
         }

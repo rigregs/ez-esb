@@ -1,0 +1,29 @@
+package com.opnitech.esb.processor.factories.services;
+
+import org.elasticsearch.common.inject.Singleton;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.SubscriberRepository;
+import com.opnitech.esb.processor.services.ConsumerService;
+import com.opnitech.esb.processor.services.impl.ConsumerServiceImpl;
+
+/**
+ * @author Rigre Gregorio Garciandia Sonora
+ */
+@Configuration
+public class ConsumerServiceFactory {
+
+    public ConsumerServiceFactory() {
+        // Default constructor
+    }
+
+    @Singleton
+    @Bean
+    public ConsumerService getConsumerService(SubscriberRepository subscriberRepository) {
+
+        ConsumerService consumerService = new ConsumerServiceImpl(subscriberRepository);
+
+        return consumerService;
+    }
+}
