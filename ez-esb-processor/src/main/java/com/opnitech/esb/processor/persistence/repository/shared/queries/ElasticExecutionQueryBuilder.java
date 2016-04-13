@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.repository.queries;
+package com.opnitech.esb.processor.persistence.repository.shared.queries;
 
 import org.elasticsearch.index.query.QueryBuilder;
 

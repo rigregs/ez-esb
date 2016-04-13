@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.repository;
+package com.opnitech.esb.processor.persistence.repository.shared;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
@@ -10,8 +10,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 import com.opnitech.esb.processor.persistence.model.elastic.ElasticDocument;
-import com.opnitech.esb.processor.persistence.repository.queries.ElasticExecutionQueryBuilder;
-import com.opnitech.esb.processor.persistence.repository.queries.ElasticQueryBuilder;
+import com.opnitech.esb.processor.persistence.repository.shared.queries.ElasticExecutionQueryBuilder;
+import com.opnitech.esb.processor.persistence.repository.shared.queries.ElasticQueryBuilder;
 import com.opnitech.esb.processor.utils.JSONUtil;
 
 /**
