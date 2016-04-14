@@ -20,6 +20,8 @@ import com.opnitech.esb.processor.utils.JSONUtil;
  */
 public class ElasticRepository {
 
+    private static final String PERCOLATOR_TYPE = ".percolator";
+
     private final ElasticsearchTemplate elasticsearchTemplate;
 
     public ElasticRepository(ElasticsearchTemplate elasticsearchTemplate) {
@@ -31,6 +33,17 @@ public class ElasticRepository {
         if (!this.elasticsearchTemplate.indexExists(indexName)) {
             this.elasticsearchTemplate.createIndex(indexName);
         }
+    }
+
+    public void savePercolator(String indexName, String elasticId, String queryAsJSON) {
+
+        StringBuffer queryBuffer = new StringBuffer();
+        queryBuffer.append("{\"query\": ");
+        queryBuffer.append(queryAsJSON);
+        queryBuffer.append("}");
+
+        this.elasticsearchTemplate.getClient().prepareIndex(indexName, PERCOLATOR_TYPE, elasticId)
+                .setSource(queryBuffer.toString()).setRefresh(true).execute().actionGet();
     }
 
     public <T extends ElasticDocument> T save(String indexName, String type, T document) {

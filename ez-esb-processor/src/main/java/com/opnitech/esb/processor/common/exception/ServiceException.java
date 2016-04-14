@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.common;
+package com.opnitech.esb.processor.common.exception;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

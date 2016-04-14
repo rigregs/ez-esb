@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ElasticDocumentMetadata extends ElasticDocument {
+public class DocumentMetadata extends ElasticDocument {
 
     private String elasticDocumentId;
     private String documentId;
@@ -17,7 +17,7 @@ public class ElasticDocumentMetadata extends ElasticDocument {
     
     private String sequnce;
 
-    public ElasticDocumentMetadata() {
+    public DocumentMetadata() {
         // Default constructor
     }
 

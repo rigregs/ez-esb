@@ -2,7 +2,7 @@ package com.opnitech.esb.processor.asynch;
 
 import org.apache.camel.Handler;
 
-import com.opnitech.esb.processor.common.ServiceException;
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 

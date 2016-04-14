@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opnitech.esb.processor.common.ServiceException;
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.controllers.shared.AbstractServerRestController;
 import com.opnitech.esb.processor.controllers.shared.ControllerResult;
 import com.opnitech.esb.processor.services.ConsumerService;
@@ -28,11 +28,11 @@ public class ConsumerController extends AbstractServerRestController {
         // Default constructor
     }
 
-    @RequestMapping(value = "/synch-match-query/{customerId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<ControllerResult> synchConsumerConfiguration(@PathVariable long customerId)
+    @RequestMapping(value = "/synch-match-query/{consumerId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<ControllerResult> synchConsumerConfiguration(@PathVariable long consumerId)
             throws ServiceException {
 
-        this.consumerService.synchConsumerConfiguration(customerId);
+        this.consumerService.synchConsumerConfiguration(consumerId);
 
         return buildSuccessControllerResultResponse();
     }

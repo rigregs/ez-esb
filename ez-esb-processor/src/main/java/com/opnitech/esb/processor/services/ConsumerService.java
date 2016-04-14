@@ -1,13 +1,11 @@
 package com.opnitech.esb.processor.services;
 
-import org.springframework.web.bind.annotation.PathVariable;
-
-import com.opnitech.esb.processor.common.ServiceException;
+import com.opnitech.esb.processor.common.exception.ServiceException;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 public interface ConsumerService {
 
-    void synchConsumerConfiguration(@PathVariable long customerId) throws ServiceException;
+    void synchConsumerConfiguration(long consumerId) throws ServiceException;
 }

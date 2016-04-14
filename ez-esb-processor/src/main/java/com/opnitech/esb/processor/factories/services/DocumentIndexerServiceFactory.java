@@ -4,9 +4,10 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
-import com.opnitech.esb.processor.persistence.elastic.repository.document.ElasticIndexMetadataRepository;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
+import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 import com.opnitech.esb.processor.services.impl.DocumentIndexerServiceImpl;
 
 /**
@@ -19,10 +20,14 @@ public class DocumentIndexerServiceFactory {
         // Default constructor
     }
 
-    @Bean(name = "documentIndexerService")
+    @Bean
     public DocumentIndexerService getDocumentIndexerService(DocumentRepository documentRepository,
-            ElasticIndexMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate) {
+            DocumentMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate,
+            IndexMetadataCache indexMetadataCache) {
 
-        return new DocumentIndexerServiceImpl(documentRepository, elasticIndexMetadataRepository, producerTemplate);
+        DocumentIndexerService documentIndexerService = new DocumentIndexerServiceImpl(documentRepository,
+                elasticIndexMetadataRepository, producerTemplate, indexMetadataCache);
+
+        return documentIndexerService;
     }
 }

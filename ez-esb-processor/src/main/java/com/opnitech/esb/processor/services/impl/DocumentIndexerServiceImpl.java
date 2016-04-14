@@ -1,19 +1,18 @@
 package com.opnitech.esb.processor.services.impl;
 
 import java.text.MessageFormat;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
+import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
-import com.opnitech.esb.processor.persistence.elastic.model.document.ElasticDocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
-import com.opnitech.esb.processor.persistence.elastic.repository.document.ElasticIndexMetadataRepository;
-import com.opnitech.esb.processor.persistence.shared.ElasticIndexMetadata;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
+import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 import com.opnitech.esb.processor.utils.CheckSumUtil;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
@@ -24,18 +23,19 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
     private static final int MIN_SEQUECE_LENGHT = 20;
 
-    private final Set<ElasticIndexMetadata> elasticIndexMetadatas = new HashSet<>();
-
     private final DocumentRepository documentRepository;
-    private final ElasticIndexMetadataRepository elasticIndexMetadataRepository;
+    private final DocumentMetadataRepository elasticIndexMetadataRepository;
     private final ProducerTemplate producerTemplate;
+    private final IndexMetadataCache indexMetadataCache;
 
     public DocumentIndexerServiceImpl(DocumentRepository documentRepository,
-            ElasticIndexMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate) {
+            DocumentMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate,
+            IndexMetadataCache indexMetadataCache) {
 
         this.documentRepository = documentRepository;
         this.elasticIndexMetadataRepository = elasticIndexMetadataRepository;
         this.producerTemplate = producerTemplate;
+        this.indexMetadataCache = indexMetadataCache;
     }
 
     @Override
@@ -73,9 +73,9 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
                 documentCRUDCommand.getDocumentType());
 
-        guaranteeIndexExists(elasticIndexMetadata);
+        this.indexMetadataCache.guaranteeIndexExists(elasticIndexMetadata);
 
-        ElasticDocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
+        DocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
                 documentCRUDCommand.getDocumentId());
 
         String newDocumentSequence = StringUtils.trimToEmpty(documentCRUDCommand.getSequence());
@@ -88,7 +88,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     }
 
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
-            ElasticDocumentMetadata elasticDocumentMetadata) {
+            DocumentMetadata elasticDocumentMetadata) {
 
         elasticDocumentMetadata.setSequnce(documentCRUDCommand.getSequence());
 
@@ -105,7 +105,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     }
 
     private void updateElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata,
-            ElasticDocumentMetadata elasticDocumentMetadata, String documentCheckSum, String elasticDocumentId) {
+            DocumentMetadata elasticDocumentMetadata, String documentCheckSum, String elasticDocumentId) {
 
         elasticDocumentMetadata.setElasticDocumentId(elasticDocumentId);
         elasticDocumentMetadata.setDocumentCheckSum(documentCheckSum);
@@ -114,13 +114,13 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
                 elasticDocumentMetadata);
     }
 
-    private ElasticDocumentMetadata resolveElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, String id) {
+    private DocumentMetadata resolveElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, String id) {
 
-        ElasticDocumentMetadata elasticDocumentMetadata = this.elasticIndexMetadataRepository
+        DocumentMetadata elasticDocumentMetadata = this.elasticIndexMetadataRepository
                 .retrieveElasticDocumentMetadata(elasticIndexMetadata, id);
 
         if (elasticDocumentMetadata == null) {
-            elasticDocumentMetadata = new ElasticDocumentMetadata();
+            elasticDocumentMetadata = new DocumentMetadata();
             elasticDocumentMetadata.setDocumentId(id);
 
             elasticDocumentMetadata = this.documentRepository.save(elasticIndexMetadata.getIndexName(),
@@ -128,13 +128,5 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         }
 
         return elasticDocumentMetadata;
-    }
-
-    private void guaranteeIndexExists(ElasticIndexMetadata elasticIndexMetadata) {
-
-        if (!this.elasticIndexMetadatas.contains(elasticIndexMetadata)) {
-            this.documentRepository.createIndex(elasticIndexMetadata.getIndexName());
-            this.elasticIndexMetadatas.add(elasticIndexMetadata);
-        }
     }
 }

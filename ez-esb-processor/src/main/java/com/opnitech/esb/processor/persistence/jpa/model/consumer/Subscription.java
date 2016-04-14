@@ -31,7 +31,7 @@ public class Subscription extends Persistent {
 
     private Consumer consumer;
 
-    private String documentId;
+    private String documentType;
     private String documentVersion;
 
     private String subscriptionEnpointConfig;
@@ -77,16 +77,6 @@ public class Subscription extends Persistent {
         this.description = description;
     }
 
-    @Column(name = "documentId", nullable = false)
-    public String getDocumentId() {
-
-        return this.documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-
-        this.documentId = documentId;
-    }
 
     @Column(name = "documentVersion", nullable = false)
     public String getDocumentVersion() {
@@ -124,5 +114,16 @@ public class Subscription extends Persistent {
     public void setSubscriptionEnpointConfig(String subscriptionEnpointConfig) {
 
         this.subscriptionEnpointConfig = subscriptionEnpointConfig;
+    }
+
+    @Column(name = "documentType", nullable = false)
+    public String getDocumentType() {
+
+        return this.documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+
+        this.documentType = documentType;
     }
 }

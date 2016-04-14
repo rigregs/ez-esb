@@ -4,8 +4,10 @@ import org.elasticsearch.common.inject.Singleton;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorMetadataRepository;
 import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.SubscriberRepository;
 import com.opnitech.esb.processor.services.ConsumerService;
+import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 import com.opnitech.esb.processor.services.impl.ConsumerServiceImpl;
 
 /**
@@ -20,9 +22,11 @@ public class ConsumerServiceFactory {
 
     @Singleton
     @Bean
-    public ConsumerService getConsumerService(SubscriberRepository subscriberRepository) {
+    public ConsumerService getConsumerService(SubscriberRepository subscriberRepository,
+            PercolatorMetadataRepository percolatorMetadataRepository, IndexMetadataCache indexMetadataCache) {
 
-        ConsumerService consumerService = new ConsumerServiceImpl(subscriberRepository);
+        ConsumerService consumerService = new ConsumerServiceImpl(subscriberRepository, percolatorMetadataRepository,
+                indexMetadataCache);
 
         return consumerService;
     }

@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.shared;
+package com.opnitech.esb.processor.common.data;
 
 import java.text.MessageFormat;
 
@@ -13,12 +13,14 @@ public class ElasticIndexMetadata {
 
     private static final String ESB_INDEX_FORMAT = "esb-{0}-{1}-document";
     private static final String ESB_METADATA_TYPE_FORMAT = "metadata";
+    private static final String ESB_PERCOLATOR_METADATA_TYPE_FORMAT = "percolator-metadata";
     private static final String ESB_DOCUMENT_TYPE_FORMAT = "document";
 
     private String version;
     private String documentType;
 
     private String indexName;
+    private String percolatorMetadataTypeName;
     private String metadataTypeName;
     private String documentTypeName;
 
@@ -36,6 +38,7 @@ public class ElasticIndexMetadata {
         this.indexName = StringUtils.lowerCase(MessageFormat.format(ESB_INDEX_FORMAT, this.documentType, this.version));
         this.metadataTypeName = ESB_METADATA_TYPE_FORMAT;
         this.documentTypeName = ESB_DOCUMENT_TYPE_FORMAT;
+        this.percolatorMetadataTypeName = ESB_PERCOLATOR_METADATA_TYPE_FORMAT;
     }
 
     @Override
@@ -115,5 +118,15 @@ public class ElasticIndexMetadata {
     public void setMessageSequence(String messageSequence) {
 
         this.messageSequence = messageSequence;
+    }
+
+    public String getPercolatorMetadataTypeName() {
+
+        return this.percolatorMetadataTypeName;
+    }
+
+    public void setPercolatorMetadataTypeName(String percolatorMetadataTypeName) {
+
+        this.percolatorMetadataTypeName = percolatorMetadataTypeName;
     }
 }
