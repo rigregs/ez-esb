@@ -90,7 +90,6 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         if (newDocumentSequence.compareTo(oldDocumentSequence) >= 0) {
 
             processDocument(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
-            notifyConsumers(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
         }
     }
 
@@ -110,12 +109,11 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
             documentOutboundCommand.setMatchQueryId(matchId);
 
             this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("outboundSend"), documentOutboundCommand);
-
         }
     }
 
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
-            DocumentMetadata documentMetadata) {
+            DocumentMetadata documentMetadata) throws ServiceException {
 
         documentMetadata.setSequnce(documentCRUDCommand.getSequence());
 
@@ -128,6 +126,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
                     elasticIndexMetadata.getDocumentTypeName(), documentMetadata.getElasticDocumentId(), documentAsJSON);
 
             updateElasticDocumentMetadata(elasticIndexMetadata, documentMetadata, documentCheckSum, elasticDocumentId);
+            notifyConsumers(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
         }
     }
 
