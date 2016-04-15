@@ -9,11 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
-import com.opnitech.esb.processor.persistence.elastic.model.command.DocumentCRUDCommand;
 import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
+import com.opnitech.esb.processor.persistence.rabbit.DocumentCRUDCommand;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 import com.opnitech.esb.processor.utils.CheckSumUtil;
@@ -89,12 +89,18 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         if (newDocumentSequence.compareTo(oldDocumentSequence) >= 0) {
 
             processDocument(documentCRUDCommand, elasticIndexMetadata, elasticDocumentMetadata);
+            notifyConsumers(documentCRUDCommand, elasticIndexMetadata);
+        }
+    }
 
-            List<Long> matchIds = this.percolatorRepository.evaluatePercolator(elasticIndexMetadata.getIndexName(),
-                    elasticIndexMetadata.getDocumentType(), documentCRUDCommand.getDocumentAsJSON());
-            for (Long matchId : matchIds) {
-                System.out.println(matchId);
-            }
+    private void notifyConsumers(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata)
+            throws ServiceException {
+
+        List<Long> matchIds = this.percolatorRepository.evaluatePercolator(elasticIndexMetadata.getIndexName(),
+                elasticIndexMetadata.getDocumentType(), documentCRUDCommand.getDocumentAsJSON());
+
+        for (Long matchId : matchIds) {
+            System.out.println(matchId);
         }
     }
 

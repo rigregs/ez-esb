@@ -1,7 +1,4 @@
-
-package com.opnitech.esb.processor.persistence.elastic.model.command;
-
-import java.io.Serializable;
+package com.opnitech.esb.processor.persistence.elastic.model.shared;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,11 +9,21 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Command implements Serializable {
+public abstract class ElasticDocument {
 
-    private static final long serialVersionUID = 5151247712036974106L;
+    private String id;
 
-    public Command() {
+    public ElasticDocument() {
         // Default constructor
+    }
+
+    public String getId() {
+
+        return this.id;
+    }
+
+    public void setId(String id) {
+
+        this.id = id;
     }
 }

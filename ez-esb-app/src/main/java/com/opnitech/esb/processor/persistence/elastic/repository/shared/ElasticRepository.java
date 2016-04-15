@@ -19,7 +19,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 import com.opnitech.esb.processor.common.exception.ServiceException;
-import com.opnitech.esb.processor.persistence.elastic.model.document.ElasticDocument;
+import com.opnitech.esb.processor.persistence.elastic.model.shared.ElasticDocument;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticExecutionQueryBuilder;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;
 import com.opnitech.esb.processor.utils.JSONUtil;
