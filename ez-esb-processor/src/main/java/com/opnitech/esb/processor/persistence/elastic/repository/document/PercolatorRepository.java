@@ -18,9 +18,9 @@ import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
-public class PercolatorMetadataRepository extends ElasticRepository {
+public class PercolatorRepository extends ElasticRepository {
 
-    public PercolatorMetadataRepository(ElasticsearchTemplate elasticsearchTemplate) {
+    public PercolatorRepository(ElasticsearchTemplate elasticsearchTemplate) {
         super(elasticsearchTemplate);
     }
 

@@ -1,8 +1,16 @@
 package com.opnitech.esb.processor.persistence.elastic.repository.shared;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.percolate.PercolateResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -10,6 +18,7 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.document.ElasticDocument;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticExecutionQueryBuilder;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;
@@ -18,14 +27,16 @@ import com.opnitech.esb.processor.utils.JSONUtil;
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
-public class ElasticRepository {
+public abstract class ElasticRepository {
 
     private static final String PERCOLATOR_TYPE = ".percolator";
 
     private final ElasticsearchTemplate elasticsearchTemplate;
+    private final Client client;
 
     public ElasticRepository(ElasticsearchTemplate elasticsearchTemplate) {
         this.elasticsearchTemplate = elasticsearchTemplate;
+        this.client = elasticsearchTemplate.getClient();
     }
 
     public void createIndex(String indexName) {
@@ -35,15 +46,41 @@ public class ElasticRepository {
         }
     }
 
-    public void savePercolator(String indexName, String elasticId, String queryAsJSON) {
+    public List<Long> evaluatePercolator(String indexName, String type, String objectAsJSON) throws ServiceException {
 
-        StringBuffer queryBuffer = new StringBuffer();
-        queryBuffer.append("{\"query\": ");
-        queryBuffer.append(queryAsJSON);
-        queryBuffer.append("}");
+        try (XContentBuilder docBuilder = XContentFactory.jsonBuilder().startObject()) {
+            docBuilder.field("doc").startObject();
+            docBuilder.field("content", objectAsJSON);
+            docBuilder.endObject();
+            docBuilder.endObject();
 
-        this.elasticsearchTemplate.getClient().prepareIndex(indexName, PERCOLATOR_TYPE, elasticId)
-                .setSource(queryBuffer.toString()).setRefresh(true).execute().actionGet();
+            PercolateResponse response = this.client.preparePercolate().setIndices(indexName).setDocumentType(type)
+                    .setSource(docBuilder).execute().actionGet();
+
+            List<Long> matchIndexes = new ArrayList<>();
+
+            for (PercolateResponse.Match match : response) {
+                matchIndexes.add(Long.parseLong(match.getId().string()));
+            }
+
+            return matchIndexes;
+        }
+        catch (IOException exception) {
+            throw new ServiceException(exception);
+        }
+    }
+
+    public void savePercolator(String indexName, String elasticId, String queryAsJSON) throws ServiceException {
+
+        try (XContentBuilder docBuilder = XContentFactory.jsonBuilder().startObject()) {
+            docBuilder.startObject().field("query", queryAsJSON).endObject();
+
+            this.client.prepareIndex(indexName, PERCOLATOR_TYPE, elasticId).setSource(docBuilder).setRefresh(true).execute()
+                    .actionGet();
+        }
+        catch (IOException exception) {
+            throw new ServiceException(exception);
+        }
     }
 
     public <T extends ElasticDocument> T save(String indexName, String type, T document) {
@@ -81,8 +118,7 @@ public class ElasticRepository {
 
     private String insertDocument(String indexName, String type, String objectAsJSON) {
 
-        IndexRequestBuilder indexRequestBuilder = this.elasticsearchTemplate.getClient().prepareIndex(indexName, type)
-                .setSource(objectAsJSON);
+        IndexRequestBuilder indexRequestBuilder = this.client.prepareIndex(indexName, type).setSource(objectAsJSON);
 
         IndexResponse response = indexRequestBuilder.get();
 
@@ -91,7 +127,7 @@ public class ElasticRepository {
 
     private void updateDocument(String indexName, String type, String id, String objectAsJSON) {
 
-        this.elasticsearchTemplate.getClient().prepareIndex(indexName, type, id).setSource(objectAsJSON).setRefresh(true).get();
+        this.client.prepareIndex(indexName, type, id).setSource(objectAsJSON).setRefresh(true).get();
     }
 
     protected <E, R> E executeQuery(String indexName, String type, ElasticQueryBuilder<R> queryBuilder,
