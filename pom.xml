@@ -309,6 +309,6 @@
 	</build>
 
 	<modules>
-		<module>ez-esb-processor</module>
+		<module>ez-esb-app</module>
 	</modules>
 </project>

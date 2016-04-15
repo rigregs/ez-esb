@@ -8,9 +8,9 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>ez-esb-processor</artifactId>
+	<artifactId>ez-esb-app</artifactId>
 	<packaging>war</packaging>
-	<name>ez-esb-processor</name>
+	<name>ez-esb-app</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
