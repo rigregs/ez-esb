@@ -14,6 +14,7 @@ import com.opnitech.esb.processor.persistence.elastic.repository.document.Docume
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
 import com.opnitech.esb.processor.persistence.rabbit.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 import com.opnitech.esb.processor.utils.CheckSumUtil;
@@ -80,55 +81,64 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
         this.indexMetadataCache.guaranteeIndexExists(elasticIndexMetadata);
 
-        DocumentMetadata elasticDocumentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
+        DocumentMetadata documentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
                 documentCRUDCommand.getDocumentId());
 
         String newDocumentSequence = StringUtils.trimToEmpty(documentCRUDCommand.getSequence());
-        String oldDocumentSequence = StringUtils.trimToEmpty(elasticDocumentMetadata.getSequnce());
+        String oldDocumentSequence = StringUtils.trimToEmpty(documentMetadata.getSequnce());
 
         if (newDocumentSequence.compareTo(oldDocumentSequence) >= 0) {
 
-            processDocument(documentCRUDCommand, elasticIndexMetadata, elasticDocumentMetadata);
-            notifyConsumers(documentCRUDCommand, elasticIndexMetadata);
+            processDocument(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
+            notifyConsumers(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
         }
     }
 
-    private void notifyConsumers(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata)
-            throws ServiceException {
+    private void notifyConsumers(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
+            DocumentMetadata documentMetadata) throws ServiceException {
 
         List<Long> matchIds = this.percolatorRepository.evaluatePercolator(elasticIndexMetadata.getIndexName(),
                 elasticIndexMetadata.getDocumentType(), documentCRUDCommand.getDocumentAsJSON());
 
         for (Long matchId : matchIds) {
-            System.out.println(matchId);
+            DocumentOutboundCommand documentOutboundCommand = new DocumentOutboundCommand();
+            documentOutboundCommand.setDocumentType(elasticIndexMetadata.getDocumentType());
+            documentOutboundCommand.setVersion(elasticIndexMetadata.getVersion());
+
+            documentOutboundCommand.setDocumentMetadata(documentMetadata);
+
+            documentOutboundCommand.setMatchQueryId(matchId);
+
+            this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("outboundSend"), documentOutboundCommand);
+
         }
     }
 
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
-            DocumentMetadata elasticDocumentMetadata) {
+            DocumentMetadata documentMetadata) {
 
-        elasticDocumentMetadata.setSequnce(documentCRUDCommand.getSequence());
+        documentMetadata.setSequnce(documentCRUDCommand.getSequence());
 
         String documentAsJSON = documentCRUDCommand.getDocumentAsJSON();
 
         String documentCheckSum = CheckSumUtil.checkSum(documentAsJSON);
-        if (!Objects.equals(documentCheckSum, elasticDocumentMetadata.getDocumentCheckSum())) {
+        if (!Objects.equals(documentCheckSum, documentMetadata.getDocumentCheckSum())) {
 
             String elasticDocumentId = this.documentRepository.save(elasticIndexMetadata.getIndexName(),
-                    elasticIndexMetadata.getDocumentTypeName(), elasticDocumentMetadata.getElasticDocumentId(), documentAsJSON);
+                    elasticIndexMetadata.getDocumentTypeName(), documentMetadata.getElasticDocumentId(), documentAsJSON);
 
-            updateElasticDocumentMetadata(elasticIndexMetadata, elasticDocumentMetadata, documentCheckSum, elasticDocumentId);
+            updateElasticDocumentMetadata(elasticIndexMetadata, documentMetadata, documentCheckSum, elasticDocumentId);
         }
     }
 
-    private void updateElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata,
-            DocumentMetadata elasticDocumentMetadata, String documentCheckSum, String elasticDocumentId) {
+    private void updateElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, DocumentMetadata documentMetadata,
+            String documentCheckSum, String elasticDocumentId) {
 
-        elasticDocumentMetadata.setElasticDocumentId(elasticDocumentId);
-        elasticDocumentMetadata.setDocumentCheckSum(documentCheckSum);
+        documentMetadata.setElasticDocumentId(elasticDocumentId);
+        documentMetadata.setDocumentCheckSum(documentCheckSum);
 
         this.documentRepository.save(elasticIndexMetadata.getIndexName(), elasticIndexMetadata.getMetadataTypeName(),
-                elasticDocumentMetadata);
+                documentMetadata);
     }
 
     private DocumentMetadata resolveElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, String id) {

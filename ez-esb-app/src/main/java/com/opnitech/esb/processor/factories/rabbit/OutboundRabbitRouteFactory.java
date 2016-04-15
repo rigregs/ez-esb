@@ -8,13 +8,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.processor.configuration.PropertyPlaceholder;
-import com.opnitech.esb.processor.persistence.rabbit.DocumentCRUDCommand;
+import com.opnitech.esb.processor.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
-
 @Configuration
 public class OutboundRabbitRouteFactory {
 
@@ -40,7 +39,7 @@ public class OutboundRabbitRouteFactory {
     public RouteBuilder getOutboundReceiveRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
         RouteBuilder routeBuilder = RouteBuilderUtil.createReceiveRabbitRouteBuilder("outboundMessageConsumer",
-                propertyPlaceholder.getOutboundRoute(), DocumentCRUDCommand.class);
+                propertyPlaceholder.getOutboundRoute(), DocumentOutboundCommand.class);
 
         return routeBuilder;
     }

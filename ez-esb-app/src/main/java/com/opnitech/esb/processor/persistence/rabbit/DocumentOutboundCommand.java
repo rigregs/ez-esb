@@ -3,6 +3,7 @@ package com.opnitech.esb.processor.persistence.rabbit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -14,8 +15,9 @@ public class DocumentOutboundCommand extends Command {
     private static final long serialVersionUID = 416704714172458307L;
 
     private String documentType;
-    private String documentId;
     private String version;
+
+    private DocumentMetadata documentMetadata;
 
     private long matchQueryId;
 
@@ -31,16 +33,6 @@ public class DocumentOutboundCommand extends Command {
     public void setDocumentType(String documentType) {
 
         this.documentType = documentType;
-    }
-
-    public String getDocumentId() {
-
-        return this.documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-
-        this.documentId = documentId;
     }
 
     public String getVersion() {
@@ -61,5 +53,15 @@ public class DocumentOutboundCommand extends Command {
     public void setMatchQueryId(long matchQueryId) {
 
         this.matchQueryId = matchQueryId;
+    }
+
+    public DocumentMetadata getDocumentMetadata() {
+
+        return this.documentMetadata;
+    }
+
+    public void setDocumentMetadata(DocumentMetadata documentMetadata) {
+
+        this.documentMetadata = documentMetadata;
     }
 }
