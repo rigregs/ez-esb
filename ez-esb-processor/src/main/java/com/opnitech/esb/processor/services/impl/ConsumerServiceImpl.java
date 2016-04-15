@@ -14,7 +14,7 @@ import org.apache.commons.lang3.Validate;
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.document.PercolatorMetadata;
-import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorMetadataRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Consumer;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.MatchQuery;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Subscription;
@@ -30,11 +30,11 @@ public class ConsumerServiceImpl implements ConsumerService {
     private static final String MATCH_ALL_PERCOLATOR = "{\"match_all\": {}}";
 
     private final SubscriberRepository subscriberRepository;
-    private final PercolatorMetadataRepository percolatorMetadataRepository;
+    private final PercolatorRepository percolatorMetadataRepository;
     private final IndexMetadataCache indexMetadataCache;
 
     public ConsumerServiceImpl(SubscriberRepository subscriberRepository,
-            PercolatorMetadataRepository percolatorMetadataRepository, IndexMetadataCache indexMetadataCache) {
+            PercolatorRepository percolatorMetadataRepository, IndexMetadataCache indexMetadataCache) {
 
         this.subscriberRepository = subscriberRepository;
         this.percolatorMetadataRepository = percolatorMetadataRepository;
@@ -55,7 +55,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private void processSubscription(Consumer consumer, Subscription subscription) {
+    private void processSubscription(Consumer consumer, Subscription subscription) throws ServiceException {
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(subscription.getDocumentVersion(),
                 subscription.getDocumentType());
@@ -75,7 +75,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private void updatePercolator(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo) {
+    private void updatePercolator(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo)
+            throws ServiceException {
 
         PercolatorMetadata percolatorMetadata = percolatorInfo.getPercolatorMetadata();
         if (percolatorMetadata == null) {
@@ -89,7 +90,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         updatePercolatorQuery(elasticIndexMetadata, percolatorInfo);
     }
 
-    private void updatePercolatorQuery(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo) {
+    private void updatePercolatorQuery(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo)
+            throws ServiceException {
 
         String percolatorId = Long.toString(percolatorInfo.getMatchQuery().getId());
 

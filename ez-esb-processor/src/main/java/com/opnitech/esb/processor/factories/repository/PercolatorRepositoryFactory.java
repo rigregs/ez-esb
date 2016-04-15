@@ -5,23 +5,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
-import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorMetadataRepository;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 @Configuration
-public class PercolatorMetadataRepositoryFactory {
+public class PercolatorRepositoryFactory {
 
-    public PercolatorMetadataRepositoryFactory() {
+    public PercolatorRepositoryFactory() {
         // Default constructor
     }
 
     @Singleton
     @Bean
-    public PercolatorMetadataRepository getPercolatorMetadataRepository(ElasticsearchTemplate elasticsearchTemplate) {
+    public PercolatorRepository getPercolatorRepository(ElasticsearchTemplate elasticsearchTemplate) {
 
-        PercolatorMetadataRepository percolatorMetadataRepository = new PercolatorMetadataRepository(elasticsearchTemplate);
+        PercolatorRepository percolatorMetadataRepository = new PercolatorRepository(elasticsearchTemplate);
 
         return percolatorMetadataRepository;
     }
