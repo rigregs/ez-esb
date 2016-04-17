@@ -2,6 +2,7 @@ package com.opnitech.esb.processor.factories.services;
 
 import java.util.List;
 
+import org.elasticsearch.common.inject.Singleton;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +24,7 @@ public class RoutingServiceFactory {
         // Default constructor
     }
 
+    @Singleton
     @Bean
     public RoutingService getRoutingService(List<RouteExecuter<? extends RouteConfiguration>> routeExecuters,
             SubscriptionRepository subscriptionRepository, DocumentRepository documentRepository,
