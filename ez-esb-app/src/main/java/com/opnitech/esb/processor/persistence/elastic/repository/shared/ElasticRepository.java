@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.percolate.PercolateResponse;
@@ -131,6 +132,13 @@ public abstract class ElasticRepository {
     private void updateDocument(String indexName, String type, String id, String objectAsJSON) {
 
         this.client.prepareIndex(indexName, type, id).setSource(objectAsJSON).setRefresh(true).get();
+    }
+
+    protected String executeGetById(String indexName, String type, String id) {
+
+        GetResponse response = this.client.prepareGet(indexName, type, id).execute().actionGet();
+
+        return response.getSourceAsString();
     }
 
     protected <E, R> E executeQuery(String indexName, String type, ElasticQueryBuilder<R> queryBuilder,

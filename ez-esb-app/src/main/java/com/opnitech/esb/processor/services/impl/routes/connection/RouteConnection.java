@@ -1,7 +1,12 @@
 package com.opnitech.esb.processor.services.impl.routes.connection;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.lang3.StringUtils;
 
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 
 /**
@@ -10,28 +15,59 @@ import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
 public abstract class RouteConnection<R extends RouteConfiguration> {
 
     private final R routeConfiguration;
+    private final String fromURI;
 
-    private long lastVisit;
+    private CamelContext context;
+    private ProducerTemplate producerTemplate;
+    private final String fromFullRoute;
 
-    public RouteConnection(R routeConfiguration) {
+    public RouteConnection(String fromURI, String fromFullRoute, R routeConfiguration) throws ServiceException {
+        this.fromURI = fromURI;
+        this.fromFullRoute = fromFullRoute;
         this.routeConfiguration = routeConfiguration;
-        visit();
+
+        initializeCamelContext();
     }
 
-    protected abstract void routeConsumerPayload(String objectAsJSON);
+    protected abstract RoutesBuilder createCamelRoute();
 
-    public abstract void close();
+    private void initializeCamelContext() throws ServiceException {
+
+        try {
+            this.context = new DefaultCamelContext();
+
+            RoutesBuilder createCamelRoute = createCamelRoute();
+
+            this.context.addRoutes(createCamelRoute);
+
+            this.producerTemplate = this.getContext().createProducerTemplate();
+
+            this.context.start();
+        }
+        catch (Exception exception) {
+            throw new ServiceException(exception);
+        }
+    }
+
+    public void close() throws ServiceException {
+
+        try {
+            this.producerTemplate.stop();
+            this.producerTemplate = null;
+
+            this.context.stop();
+            this.context = null;
+        }
+        catch (Exception e) {
+            throw new ServiceException(e);
+        }
+    }
 
     public void send(String objectAsJSON) {
 
         if (StringUtils.isNotBlank(objectAsJSON)) {
-            routeConsumerPayload(objectAsJSON);
+            this.producerTemplate.sendBody(this.fromFullRoute, objectAsJSON);
         }
-    }
-
-    public void visit() {
-
-        this.lastVisit = System.currentTimeMillis();
     }
 
     public R getRouteConfiguration() {
@@ -39,13 +75,28 @@ public abstract class RouteConnection<R extends RouteConfiguration> {
         return this.routeConfiguration;
     }
 
-    public long getLastVisit() {
+    public String getFromURI() {
 
-        return this.lastVisit;
+        return this.fromURI;
     }
 
-    public void setLastVisit(long lastVisit) {
+    public CamelContext getContext() {
 
-        this.lastVisit = lastVisit;
+        return this.context;
+    }
+
+    public void setContext(CamelContext context) {
+
+        this.context = context;
+    }
+
+    public ProducerTemplate getProducerTemplate() {
+
+        return this.producerTemplate;
+    }
+
+    public void setProducerTemplate(ProducerTemplate producerTemplate) {
+
+        this.producerTemplate = producerTemplate;
     }
 }

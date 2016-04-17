@@ -1,27 +1,23 @@
 package com.opnitech.esb.processor.services.impl.routes.connection;
 
+import org.apache.camel.RoutesBuilder;
+
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.configuration.route.RabbitRouteConfiguration;
+import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 public class RabbitRouteConnection extends RouteConnection<RabbitRouteConfiguration> {
 
-    public RabbitRouteConnection(RabbitRouteConfiguration rabbitRouteConfiguration) {
-        super(rabbitRouteConfiguration);
+    public RabbitRouteConnection(String fromURI, RabbitRouteConfiguration rabbitRouteConfiguration) throws ServiceException {
+        super(fromURI, RouteBuilderUtil.fromDirect(fromURI), rabbitRouteConfiguration);
     }
 
     @Override
-    public void close() {
+    protected RoutesBuilder createCamelRoute() {
 
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    protected void routeConsumerPayload(String objectAsJSON) {
-
-        // TODO Auto-generated method stub
-        
+        return RouteBuilderUtil.createSendRabbitRouteBuilder(getFromURI(), getRouteConfiguration());
     }
 }

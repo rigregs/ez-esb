@@ -5,7 +5,10 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 
+import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
+import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.configuration.route.RouteConfiguration;
+import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Subscription;
 import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.SubscriptionRepository;
 import com.opnitech.esb.processor.persistence.rabbit.DocumentOutboundCommand;
@@ -13,7 +16,6 @@ import com.opnitech.esb.processor.services.RoutingService;
 import com.opnitech.esb.processor.services.impl.routes.RouteExecuter;
 import com.opnitech.esb.processor.services.impl.routes.connection.RouteConnection;
 import com.opnitech.esb.processor.services.impl.routes.connection.RouteConnectionContainer;
-import com.opnitech.esb.processor.services.impl.routes.factory.RouteConnectionFactory;
 import com.opnitech.esb.processor.utils.JSONUtil;
 
 /**
@@ -21,30 +23,38 @@ import com.opnitech.esb.processor.utils.JSONUtil;
  */
 public class RoutingServiceImpl implements RoutingService {
 
-    private final RouteConnectionContainer routeConnectionContainer = new RouteConnectionContainer();
-    private final RouteConnectionFactory routeConnectionFactory = new RouteConnectionFactory();
-
     private final List<RouteExecuter<? extends RouteConfiguration>> routeExecuters;
     private final SubscriptionRepository subscriptionRepository;
+    private final DocumentRepository documentRepository;
+    private final RouteConnectionContainer routeConnectionContainer;
 
     public RoutingServiceImpl(List<RouteExecuter<? extends RouteConfiguration>> routeExecuters,
-            SubscriptionRepository subscriptionRepository) {
+            SubscriptionRepository subscriptionRepository, DocumentRepository documentRepository,
+            RouteConnectionContainer routeConnectionContainer) {
 
         this.subscriptionRepository = subscriptionRepository;
+        this.documentRepository = documentRepository;
+        this.routeConnectionContainer = routeConnectionContainer;
         Validate.isTrue(CollectionUtils.isNotEmpty(routeExecuters));
 
         this.routeExecuters = routeExecuters;
     }
 
     @Override
-    public void route(DocumentOutboundCommand documentOutboundCommand) {
+    public void route(DocumentOutboundCommand documentOutboundCommand) throws ServiceException {
 
         Subscription subscription = this.subscriptionRepository
                 .findSubscriptionOwnMatchQuery(documentOutboundCommand.getMatchQueryId());
 
-        RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription.getId());
-        if (routeConnection == null) {
-            routeConnection = this.routeConnectionFactory.build(subscription);
+        if (subscription != null) {
+
+            String documentAsJSON = this.documentRepository.retrieveDocument(
+                    new ElasticIndexMetadata(documentOutboundCommand.getVersion(), documentOutboundCommand.getDocumentType()),
+                    documentOutboundCommand.getDocumentMetadata().getElasticDocumentId());
+
+            RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
+
+            routeConnection.send(documentAsJSON);
         }
     }
 
