@@ -14,6 +14,7 @@ import com.opnitech.esb.processor.persistence.elastic.model.document.PercolatorM
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.ElasticQueryBuilderFactory;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.ElasticRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;
+import com.opnitech.esb.processor.utils.JSONUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -29,7 +30,7 @@ public class PercolatorRepository extends ElasticRepository {
 
         ElasticQueryBuilder<PercolatorMetadata> builder = ElasticQueryBuilderFactory.booleanBuilder(PercolatorMetadata.class);
 
-        builder.andNotNull("customerId", consumerId);
+        builder.andNotNull("consumerId", consumerId);
 
         builder.withAllElements();
 
@@ -44,12 +45,12 @@ public class PercolatorRepository extends ElasticRepository {
                         SearchHit[] hits = response.getHits().getHits();
                         if (ArrayUtils.isNotEmpty(hits)) {
                             for (SearchHit hit : hits) {
-                                PercolatorMetadata percolatorMetadata = new PercolatorMetadata();
-                                percolatorMetadata.setConsumerId(consumerId);
-                                percolatorMetadata.setPercolatorId(Long.parseLong(hit.getId()));
+                                String objectAsJSON = hit.getSourceAsString();
 
-                                String queryAsJSON = hit.getSourceAsString();
-                                percolatorMetadata.setQueryAsJSON(queryAsJSON);
+                                PercolatorMetadata unmarshall = JSONUtil.unmarshall(PercolatorMetadata.class, objectAsJSON);
+                                unmarshall.setId(hit.getId());
+
+                                innerPercolatorMetadatas.add(unmarshall);
                             }
                         }
 

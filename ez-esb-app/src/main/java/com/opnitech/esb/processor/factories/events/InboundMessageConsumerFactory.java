@@ -1,10 +1,10 @@
-package com.opnitech.esb.processor.factories.asynch;
+package com.opnitech.esb.processor.factories.events;
 
 import org.elasticsearch.common.inject.Singleton;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.opnitech.esb.processor.asynch.InboundMessageConsumer;
+import com.opnitech.esb.processor.events.InboundMessageConsumer;
 import com.opnitech.esb.processor.services.DocumentIndexerService;
 
 /**

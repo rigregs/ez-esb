@@ -14,11 +14,12 @@ import org.apache.commons.lang3.Validate;
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.document.PercolatorMetadata;
+import com.opnitech.esb.processor.persistence.elastic.model.document.PercolatorOwner;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Consumer;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.MatchQuery;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Subscription;
-import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.SubscriberRepository;
+import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.ConsumerRepository;
 import com.opnitech.esb.processor.services.ConsumerService;
 import com.opnitech.esb.processor.services.cache.IndexMetadataCache;
 
@@ -29,14 +30,14 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private static final String MATCH_ALL_PERCOLATOR = "{\"match_all\": {}}";
 
-    private final SubscriberRepository subscriberRepository;
+    private final ConsumerRepository consumerRepository;
     private final PercolatorRepository percolatorMetadataRepository;
     private final IndexMetadataCache indexMetadataCache;
 
-    public ConsumerServiceImpl(SubscriberRepository subscriberRepository,
-            PercolatorRepository percolatorMetadataRepository, IndexMetadataCache indexMetadataCache) {
+    public ConsumerServiceImpl(ConsumerRepository consumerRepository, PercolatorRepository percolatorMetadataRepository,
+            IndexMetadataCache indexMetadataCache) {
 
-        this.subscriberRepository = subscriberRepository;
+        this.consumerRepository = consumerRepository;
         this.percolatorMetadataRepository = percolatorMetadataRepository;
         this.indexMetadataCache = indexMetadataCache;
     }
@@ -44,7 +45,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     public void synchConsumerConfiguration(long consumerId) throws ServiceException {
 
-        Consumer consumer = this.subscriberRepository.findOne(consumerId);
+        Consumer consumer = this.consumerRepository.findOne(consumerId);
         Validate.notNull(consumer);
 
         List<Subscription> subscriptions = consumer.getSubscriptions();
@@ -55,7 +56,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private void processSubscription(Consumer consumer, Subscription subscription) throws ServiceException {
+    private void processSubscription(Consumer consumer, Subscription subscription) {
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(subscription.getDocumentVersion(),
                 subscription.getDocumentType());
@@ -75,8 +76,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private void updatePercolator(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo)
-            throws ServiceException {
+    private void updatePercolator(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo) {
 
         PercolatorMetadata percolatorMetadata = percolatorInfo.getPercolatorMetadata();
         if (percolatorMetadata == null) {
@@ -90,8 +90,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         updatePercolatorQuery(elasticIndexMetadata, percolatorInfo);
     }
 
-    private void updatePercolatorQuery(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo)
-            throws ServiceException {
+    private void updatePercolatorQuery(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo) {
 
         String percolatorId = Long.toString(percolatorInfo.getMatchQuery().getId());
 
@@ -100,7 +99,11 @@ public class ConsumerServiceImpl implements ConsumerService {
             query = MATCH_ALL_PERCOLATOR;
         }
 
-        this.percolatorMetadataRepository.savePercolator(elasticIndexMetadata.getIndexName(), percolatorId, query);
+        PercolatorOwner percolatorOwner = new PercolatorOwner(percolatorInfo.getConsumer().getId(),
+                percolatorInfo.getSubscription().getId(), percolatorInfo.getMatchQuery().getId());
+
+        this.percolatorMetadataRepository.savePercolator(elasticIndexMetadata.getIndexName(), percolatorId, percolatorOwner,
+                query);
     }
 
     private PercolatorMetadata createPercolatorMetatada(PercolatorInfo percolatorInfo) {
@@ -154,7 +157,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                 .retrievePercolatorMetadatas(elasticIndexMetadata, consumer.getId());
 
         for (PercolatorMetadata percolatorMetadata : percolatorMetadatas) {
-            percolatorMetadataMap.put(Long.parseLong(percolatorMetadata.getId()), percolatorMetadata);
+            percolatorMetadataMap.put(percolatorMetadata.getPercolatorId(), percolatorMetadata);
         }
 
         return percolatorMetadataMap;
@@ -169,7 +172,12 @@ public class ConsumerServiceImpl implements ConsumerService {
 
             PercolatorInfo percolatorInfo = resolvePercolatorInfo(percolatorInfoMap, matchQueryId);
 
-            percolatorInfo.setMatchQuery(entry.getValue());
+            MatchQuery matchQuery = entry.getValue();
+            percolatorInfo.setMatchQuery(matchQuery);
+            percolatorInfo.setSubscription(subscription);
+
+            Consumer consumer = subscription.getConsumer();
+            percolatorInfo.setConsumer(consumer);
         }
     }
 
@@ -177,7 +185,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         PercolatorInfo percolatorInfo = percolatorInfoMap.get(matchQueryId);
         if (percolatorInfo == null) {
-            percolatorInfo = new PercolatorInfo(matchQueryId);
+            percolatorInfo = new PercolatorInfo();
             percolatorInfoMap.put(matchQueryId, percolatorInfo);
         }
 
@@ -200,13 +208,13 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private class PercolatorInfo {
 
-        private final long matchQueryId;
-
+        private Consumer consumer;
+        private Subscription subscription;
         private MatchQuery matchQuery;
         private PercolatorMetadata percolatorMetadata;
 
-        public PercolatorInfo(long matchQueryId) {
-            this.matchQueryId = matchQueryId;
+        public PercolatorInfo() {
+            // Default constructor
         }
 
         public boolean needPercolationDeletion() {
@@ -232,6 +240,26 @@ public class ConsumerServiceImpl implements ConsumerService {
         public void setPercolatorMetadata(PercolatorMetadata percolatorMetadata) {
 
             this.percolatorMetadata = percolatorMetadata;
+        }
+
+        public Subscription getSubscription() {
+
+            return this.subscription;
+        }
+
+        public void setSubscription(Subscription subscription) {
+
+            this.subscription = subscription;
+        }
+
+        public Consumer getConsumer() {
+
+            return this.consumer;
+        }
+
+        public void setConsumer(Consumer consumer) {
+
+            this.consumer = consumer;
         }
     }
 }

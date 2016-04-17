@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.processor.configuration.PropertyPlaceholder;
 import com.opnitech.esb.processor.persistence.rabbit.DocumentCRUDCommand;
+import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
@@ -29,7 +30,7 @@ public class InboundRabbitRouteFactory {
     @Singleton
     public RouteBuilder getInboundSendRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
-        RouteBuilder routeBuilder = RouteBuilderUtil.createSendRabbitRouteBuilder("inboundSend",
+        RouteBuilder routeBuilder = RouteBuilderUtil.createSendRabbitRouteBuilder(DocumentIndexerService.INBOUND_SEND_CAMEL_ROUTE,
                 propertyPlaceholder.getInboundRoute());
 
         return routeBuilder;

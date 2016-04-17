@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.asynch;
+package com.opnitech.esb.processor.events;
 
 import org.apache.camel.Handler;
 

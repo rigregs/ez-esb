@@ -55,7 +55,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
         updateSequence(documentCRUDCommand);
 
-        this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("inboundSend"), documentCRUDCommand);
+        this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(INBOUND_SEND_CAMEL_ROUTE), documentCRUDCommand);
     }
 
     private void updateSequence(DocumentCRUDCommand documentCRUDCommand) {
@@ -108,7 +108,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
             documentOutboundCommand.setMatchQueryId(matchId);
 
-            this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect("outboundSend"), documentOutboundCommand);
+            this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(OUTBOUND_SEND_CAMEL_ROUTE), documentOutboundCommand);
         }
     }
 

@@ -70,17 +70,20 @@ public abstract class ElasticRepository {
         }
     }
 
-    public void savePercolator(String indexName, String elasticId, String queryAsJSON) throws ServiceException {
+    public void savePercolator(String indexName, String elasticId, Object owner, String queryAsJSON) {
 
-        try (XContentBuilder docBuilder = XContentFactory.jsonBuilder().startObject()) {
-            docBuilder.startObject().field("query", queryAsJSON).endObject();
+        StringBuffer queryBuffer = new StringBuffer();
+        queryBuffer.append("{\"query\": ");
+        queryBuffer.append(queryAsJSON);
+        queryBuffer.append(",");
 
-            this.client.prepareIndex(indexName, PERCOLATOR_TYPE, elasticId).setSource(docBuilder).setRefresh(true).execute()
-                    .actionGet();
-        }
-        catch (IOException exception) {
-            throw new ServiceException(exception);
-        }
+        queryBuffer.append("\"owner\": ");
+        String metadataASJSON = JSONUtil.marshall(owner);
+        queryBuffer.append(metadataASJSON);
+        queryBuffer.append("}");
+
+        this.client.prepareIndex(indexName, PERCOLATOR_TYPE, elasticId).setSource(queryBuffer.toString()).setRefresh(true)
+                .execute().actionGet();
     }
 
     public <T extends ElasticDocument> T save(String indexName, String type, T document) {

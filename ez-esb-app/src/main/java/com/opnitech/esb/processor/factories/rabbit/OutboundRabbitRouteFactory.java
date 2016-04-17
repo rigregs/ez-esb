@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.processor.configuration.PropertyPlaceholder;
 import com.opnitech.esb.processor.persistence.rabbit.DocumentOutboundCommand;
+import com.opnitech.esb.processor.services.DocumentIndexerService;
 import com.opnitech.esb.processor.utils.RouteBuilderUtil;
 
 /**
@@ -28,8 +29,8 @@ public class OutboundRabbitRouteFactory {
     @Singleton
     public RouteBuilder getOutboundSendRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
-        RouteBuilder routeBuilder = RouteBuilderUtil.createSendRabbitRouteBuilder("outboundSend",
-                propertyPlaceholder.getOutboundRoute());
+        RouteBuilder routeBuilder = RouteBuilderUtil.createSendRabbitRouteBuilder(
+                DocumentIndexerService.OUTBOUND_SEND_CAMEL_ROUTE, propertyPlaceholder.getOutboundRoute());
 
         return routeBuilder;
     }

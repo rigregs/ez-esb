@@ -6,6 +6,6 @@ import com.opnitech.esb.processor.persistence.jpa.repository.shared.PersistentRe
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
-public interface SubscriberRepository extends PersistentRepository<Consumer> {
+public interface ConsumerRepository extends PersistentRepository<Consumer> {
     // NOP
 }

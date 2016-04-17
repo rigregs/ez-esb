@@ -8,6 +8,9 @@ import com.opnitech.esb.processor.persistence.rabbit.DocumentCRUDCommand;
  */
 public interface DocumentIndexerService {
 
+    final String OUTBOUND_SEND_CAMEL_ROUTE = "outboundSend";
+    final String INBOUND_SEND_CAMEL_ROUTE = "inboundSend";
+
     void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON)
             throws ServiceException;
 

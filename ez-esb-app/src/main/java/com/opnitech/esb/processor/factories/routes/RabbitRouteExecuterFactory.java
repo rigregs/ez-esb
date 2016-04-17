@@ -4,7 +4,7 @@ import org.elasticsearch.common.inject.Singleton;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.opnitech.esb.processor.routes.executer.RabbitRouteExecuter;
+import com.opnitech.esb.processor.services.impl.routes.RabbitRouteExecuter;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

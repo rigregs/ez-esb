@@ -19,6 +19,7 @@ public class DocumentOutboundCommand extends Command {
 
     private DocumentMetadata documentMetadata;
 
+    private long subscriptionId;
     private long matchQueryId;
 
     public DocumentOutboundCommand() {
@@ -63,5 +64,15 @@ public class DocumentOutboundCommand extends Command {
     public void setDocumentMetadata(DocumentMetadata documentMetadata) {
 
         this.documentMetadata = documentMetadata;
+    }
+
+    public long getSubscriptionId() {
+
+        return this.subscriptionId;
+    }
+
+    public void setSubscriptionId(long subscriptionId) {
+
+        this.subscriptionId = subscriptionId;
     }
 }

@@ -3,10 +3,16 @@ package com.opnitech.esb.processor.configuration.route;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
-public class RabbitRouteConfiguration implements RouteConfiguration {
+@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class RabbitRouteConfiguration extends RouteConfiguration {
 
     private String exchangeName;
     private boolean autoDelete;

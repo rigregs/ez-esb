@@ -13,10 +13,7 @@ import com.opnitech.esb.processor.persistence.elastic.model.shared.ElasticDocume
 public class PercolatorMetadata extends ElasticDocument {
 
     private long consumerId;
-
     private long percolatorId;
-
-    private String queryAsJSON;
 
     public PercolatorMetadata() {
         // Default constructor
@@ -40,15 +37,5 @@ public class PercolatorMetadata extends ElasticDocument {
     public void setPercolatorId(long percolatorId) {
 
         this.percolatorId = percolatorId;
-    }
-
-    public String getQueryAsJSON() {
-
-        return this.queryAsJSON;
-    }
-
-    public void setQueryAsJSON(String queryAsJSON) {
-
-        this.queryAsJSON = queryAsJSON;
     }
 }
