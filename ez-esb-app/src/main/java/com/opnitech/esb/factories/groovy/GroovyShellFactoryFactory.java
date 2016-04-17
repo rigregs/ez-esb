@@ -7,6 +7,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
 
@@ -33,7 +36,8 @@ public class GroovyShellFactoryFactory {
                 ImportCustomizer importCustomizer = new ImportCustomizer();
                 importCustomizer.addStaticStars(JSONUtil.class.getName());
 
-                importCustomizer.addImports(DocumentChangeNotification.class.getName());
+                importCustomizer.addImports(DocumentChangeNotification.class.getName(), JsonInclude.class.getName(),
+                        JsonIgnoreProperties.class.getName(), Include.class.getName(), JSONUtil.class.getName());
 
                 CompilerConfiguration configuration = new CompilerConfiguration();
                 configuration.addCompilationCustomizers(importCustomizer);

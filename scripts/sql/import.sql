@@ -25,3 +25,7 @@ INSERT INTO `match_query` (`id`,  `version`, `subscription_id`, `query`) VALUES 
 UPDATE `esb`.`match_query` 
 	SET `query`='{\n  \"bool\": {\n    \"must\": {\n      \"match\": {\n        \"make\": {\n          \"query\": \"Nissan\"\n        }\n      }\n    }\n  }\n}' 
 WHERE `id`='2';
+
+UPDATE `subscription` 
+	SET `transformation_template`='import com.opnitech.esb.client.util.JSONUtil;\nimport com.fasterxml.jackson.annotation.JsonIgnoreProperties;\nimport com.fasterxml.jackson.annotation.JsonInclude;\nimport com.fasterxml.jackson.annotation.JsonInclude.Include;\n\n@JsonInclude(Include.NON_NULL)\n@JsonIgnoreProperties(ignoreUnknown = true)\nclass Vehicle {\n	private String uuid;\n	private String accountId;\n\n	public String getUuid() {\n		return uuid;\n	}\n\n	public void setUuid(String uuid) { \n		this.uuid = uuid;\n	}\n\n	public String getAccountId() {\n		return accountId;\n	}\n\n	public void setAccountId(String accountId) { \n		this.accountId = accountId;\n	}\n}\n\nVehicle vehicle = JSONUtil.unmarshall(Vehicle.class, body.getDocumentAsJSON());\n\nString newVehicleAsJSON = JSONUtil.marshall(vehicle);\nbody.setDocumentAsJSON(newVehicleAsJSON);\n\nreturn body;' 
+WHERE `id`='2';
