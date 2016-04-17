@@ -11,7 +11,7 @@ import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticSourceDocument;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.persistence.jpa.model.consumer.Subscription;
-import com.opnitech.esb.persistence.jpa.repository.subscriber.SubscriptionRepository;
+import com.opnitech.esb.persistence.jpa.repository.consumer.SubscriptionRepository;
 import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.services.RoutingService;
 import com.opnitech.esb.services.impl.routes.connection.RouteConnection;

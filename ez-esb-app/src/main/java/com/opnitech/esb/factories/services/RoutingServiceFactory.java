@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
-import com.opnitech.esb.persistence.jpa.repository.subscriber.SubscriptionRepository;
+import com.opnitech.esb.persistence.jpa.repository.consumer.SubscriptionRepository;
 import com.opnitech.esb.services.RoutingService;
 import com.opnitech.esb.services.impl.RoutingServiceImpl;
 import com.opnitech.esb.services.impl.routes.connection.RouteConnectionContainer;

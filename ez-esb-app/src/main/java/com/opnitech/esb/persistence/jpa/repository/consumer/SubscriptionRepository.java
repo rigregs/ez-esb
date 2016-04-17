@@ -1,4 +1,4 @@
-package com.opnitech.esb.persistence.jpa.repository.subscriber;
+package com.opnitech.esb.persistence.jpa.repository.consumer;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +13,4 @@ public interface SubscriptionRepository extends PersistentRepository<Subscriptio
 
     @Query("select subscription from Subscription subscription join subscription.matchQueries matchQuery where matchQuery.id=:matchQueryId")
     Subscription findSubscriptionOwnMatchQuery(@Param("matchQueryId") Long matchQueryId);
-
 }

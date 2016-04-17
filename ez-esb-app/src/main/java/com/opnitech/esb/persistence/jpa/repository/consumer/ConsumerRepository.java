@@ -1,4 +1,4 @@
-package com.opnitech.esb.persistence.jpa.repository.subscriber;
+package com.opnitech.esb.persistence.jpa.repository.consumer;
 
 import com.opnitech.esb.persistence.jpa.model.consumer.Consumer;
 import com.opnitech.esb.persistence.jpa.repository.shared.PersistentRepository;

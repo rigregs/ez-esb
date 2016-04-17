@@ -19,9 +19,11 @@ import com.opnitech.esb.persistence.elastic.repository.document.PercolatorReposi
 import com.opnitech.esb.persistence.jpa.model.consumer.Consumer;
 import com.opnitech.esb.persistence.jpa.model.consumer.MatchQuery;
 import com.opnitech.esb.persistence.jpa.model.consumer.Subscription;
-import com.opnitech.esb.persistence.jpa.repository.subscriber.ConsumerRepository;
+import com.opnitech.esb.persistence.jpa.repository.consumer.ConsumerRepository;
+import com.opnitech.esb.persistence.jpa.repository.consumer.SubscriptionRepository;
 import com.opnitech.esb.services.ConsumerService;
 import com.opnitech.esb.services.cache.IndexMetadataCache;
+import com.opnitech.esb.services.impl.routes.connection.RouteConnectionContainer;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -33,13 +35,18 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final ConsumerRepository consumerRepository;
     private final PercolatorRepository percolatorMetadataRepository;
     private final IndexMetadataCache indexMetadataCache;
+    private final SubscriptionRepository subscriptionRepository;
+    private final RouteConnectionContainer routeConnectionContainer;
 
     public ConsumerServiceImpl(ConsumerRepository consumerRepository, PercolatorRepository percolatorMetadataRepository,
-            IndexMetadataCache indexMetadataCache) {
+            IndexMetadataCache indexMetadataCache, SubscriptionRepository subscriptionRepository,
+            RouteConnectionContainer routeConnectionContainer) {
 
         this.consumerRepository = consumerRepository;
         this.percolatorMetadataRepository = percolatorMetadataRepository;
         this.indexMetadataCache = indexMetadataCache;
+        this.subscriptionRepository = subscriptionRepository;
+        this.routeConnectionContainer = routeConnectionContainer;
     }
 
     @Override
@@ -56,7 +63,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private void processSubscription(Consumer consumer, Subscription subscription) {
+    private void processSubscription(Consumer consumer, Subscription subscription) throws ServiceException {
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(subscription.getDocumentVersion(),
                 subscription.getDocumentType());
@@ -74,6 +81,17 @@ public class ConsumerServiceImpl implements ConsumerService {
                 updatePercolator(elasticIndexMetadata, percolatorInfo);
             }
         }
+
+        updateSubscriptionGenerationCount(subscription);
+    }
+
+    private void updateSubscriptionGenerationCount(Subscription subscription) throws ServiceException {
+
+        // Force update the version to release and recreate the router
+        subscription.increaseGenerationCount();
+        this.subscriptionRepository.save(subscription);
+
+        this.routeConnectionContainer.closeRouteConnection(subscription);
     }
 
     private void updatePercolator(ElasticIndexMetadata elasticIndexMetadata, PercolatorInfo percolatorInfo) {

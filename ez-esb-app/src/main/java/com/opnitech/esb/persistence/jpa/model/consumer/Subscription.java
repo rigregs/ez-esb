@@ -35,11 +35,22 @@ public class Subscription extends Persistent {
     private String documentVersion;
 
     private String subscriptionEnpointConfig;
+    private Long generationCount;
 
     private List<MatchQuery> matchQueries;
 
     public Subscription() {
         // Default constructor
+    }
+
+    public void increaseGenerationCount() {
+
+        if (this.generationCount == null) {
+            this.generationCount = 1l;
+        }
+        else {
+            this.generationCount++;
+        }
     }
 
     @Column(name = "transformationTemplate", nullable = true)
@@ -76,7 +87,6 @@ public class Subscription extends Persistent {
 
         this.description = description;
     }
-
 
     @Column(name = "documentVersion", nullable = false)
     public String getDocumentVersion() {
@@ -125,5 +135,16 @@ public class Subscription extends Persistent {
     public void setDocumentType(String documentType) {
 
         this.documentType = documentType;
+    }
+
+    @Column(name = "generationCount", nullable = true)
+    public Long getGenerationCount() {
+
+        return this.generationCount;
+    }
+
+    public void setGenerationCount(Long generationCount) {
+
+        this.generationCount = generationCount;
     }
 }

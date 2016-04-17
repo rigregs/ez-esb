@@ -35,7 +35,7 @@ public class RouteConnectionContainer {
                 if (routeConnectionWrapper.expire()) {
                     Long subscriptionId = entry.getKey();
 
-                    closeRouteConnection(subscriptionId, routeConnectionWrapper);
+                    closeRouteConnection(subscriptionId);
                 }
             }
         }
@@ -58,8 +58,8 @@ public class RouteConnectionContainer {
             return null;
         }
 
-        if (!Objects.equals(routeConnectionWrapper.getVersion(), version)) {
-            closeRouteConnection(subscriptionId, routeConnectionWrapper);
+        if (routeConnectionWrapper.expire() || !Objects.equals(routeConnectionWrapper.getVersion(), version)) {
+            closeRouteConnection(subscriptionId);
 
             return null;
         }
@@ -72,11 +72,22 @@ public class RouteConnectionContainer {
         return routeConnection;
     }
 
-    private void closeRouteConnection(Long subscriptionId, RouteConnectionWrapper routeConnectionWrapper)
-            throws ServiceException {
+    public void closeRouteConnection(Subscription subscription) throws ServiceException {
 
-        routeConnectionWrapper.getRouteConnection().close();
-        this.routeConnections.remove(subscriptionId);
+        if (subscription != null) {
+            closeRouteConnection(subscription.getId());
+        }
+    }
+
+    private void closeRouteConnection(Long subscriptionId) throws ServiceException {
+
+        synchronized (this) {
+            RouteConnectionWrapper routeConnectionWrapper = this.routeConnections.get(subscriptionId);
+            if (routeConnectionWrapper != null) {
+                routeConnectionWrapper.getRouteConnection().close();
+                this.routeConnections.remove(subscriptionId);
+            }
+        }
     }
 
     private <R extends RouteConnection<?>> R registerConnection(Subscription subscription) throws ServiceException {
@@ -127,7 +138,7 @@ public class RouteConnectionContainer {
 
         public boolean expire() {
 
-            boolean expireDueHourNotUse = this.lastVisit > System.currentTimeMillis() - MILLIS_TO_HOUR;
+            boolean expireDueHourNotUse = this.lastVisit < System.currentTimeMillis() - MILLIS_TO_HOUR;
 
             return expireDueHourNotUse;
         }
