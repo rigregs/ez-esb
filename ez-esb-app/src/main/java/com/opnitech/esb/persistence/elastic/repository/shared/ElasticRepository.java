@@ -1,6 +1,5 @@
 package com.opnitech.esb.persistence.elastic.repository.shared;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,6 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.percolate.PercolateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -65,28 +62,23 @@ public abstract class ElasticRepository {
         createIndexRequestBuilder.addMapping(type, mapping);
     }
 
-    public List<Long> evaluatePercolator(String indexName, String type, String objectAsJSON) throws ServiceException {
+    public List<Long> evaluatePercolator(String indexName, String type, String objectAsJSON) {
 
-        try (XContentBuilder docBuilder = XContentFactory.jsonBuilder().startObject()) {
-            docBuilder.field("doc").startObject();
-            docBuilder.field("content", objectAsJSON);
-            docBuilder.endObject();
-            docBuilder.endObject();
+        StringBuffer queryBuffer = new StringBuffer();
+        queryBuffer.append("{\"doc\": ");
+        queryBuffer.append(objectAsJSON);
+        queryBuffer.append("}");
 
-            PercolateResponse response = this.client.preparePercolate().setIndices(indexName).setDocumentType(type)
-                    .setSource(docBuilder).execute().actionGet();
+        PercolateResponse response = this.client.preparePercolate().setIndices(indexName).setDocumentType(type)
+                .setSource(queryBuffer.toString()).execute().actionGet();
 
-            List<Long> matchIndexes = new ArrayList<>();
+        List<Long> matchIndexes = new ArrayList<>();
 
-            for (PercolateResponse.Match match : response) {
-                matchIndexes.add(Long.parseLong(match.getId().string()));
-            }
-
-            return matchIndexes;
+        for (PercolateResponse.Match match : response) {
+            matchIndexes.add(Long.parseLong(match.getId().string()));
         }
-        catch (IOException exception) {
-            throw new ServiceException(exception);
-        }
+
+        return matchIndexes;
     }
 
     public void savePercolator(String indexName, String elasticId, Object owner, String queryAsJSON) {

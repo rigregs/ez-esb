@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -16,12 +17,17 @@ import com.opnitech.esb.persistence.jpa.model.shared.Persistent;
  * @author Rigre Gregorio Garciandia Sonora
  */
 @Entity
-@Table(name = "consumer")
+@Table(name = "consumer", indexes =
+    {
+        @Index(name = "identifierIndex", columnList = "identifier", unique = true)
+    })
 public class Consumer extends Persistent {
 
     private static final long serialVersionUID = 7439222999982792495L;
 
     private String description;
+
+    private String identifier;
 
     private List<Subscription> subscriptions;
 
@@ -53,5 +59,16 @@ public class Consumer extends Persistent {
     public void setDescription(String description) {
 
         this.description = description;
+    }
+
+    @Column(name = "identifier", nullable=false)
+    public String getIdentifier() {
+
+        return this.identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+
+        this.identifier = identifier;
     }
 }

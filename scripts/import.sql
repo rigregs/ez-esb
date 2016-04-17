@@ -1,4 +1,0 @@
-INSERT INTO `consumer` (`id`, `version`, `description`) VALUES (1, 1, 'Test consumer');
-INSERT INTO `subscription` (`id`, `version`, `description`, `transformation_template`, `consumer_id`, `document_type`, `document_version`, `subscription_enpoint_config`) VALUES (1, '1', 'Test subscription', 'template', '1', 'person', 'v1', '');
-INSERT INTO `match_query` (`version`, `subscription_id`) VALUES ('1', '1');
-UPDATE `subscription` SET `subscription_enpoint_config`=' {\n    \"type\": \"RABBIT_MQ\",\n    \"exchangeName\": \"esb-subscriber-1\",\n    \"autoDelete\": true,\n    \"routingKey\": \"esb-subscriber-1-routingKey\",\n    \"queue\": \"esb-subscriber-1-queue\",\n    \"vhost\": \"vhost\",\n    \"host\": \"rabbit-host\",\n    \"port\": 1234,\n    \"username\": \"username\",\n    \"password\": \"password\"\n}' WHERE `id`='1';
