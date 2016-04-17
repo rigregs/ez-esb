@@ -1,4 +1,4 @@
-package com.opnitech.esb.processor.persistence.rabbit;
+package com.opnitech.esb.processor.persistence.elastic.model.client;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

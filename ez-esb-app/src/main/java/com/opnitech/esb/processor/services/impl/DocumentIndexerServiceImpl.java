@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
-import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.PercolatorRepository;
@@ -101,6 +101,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
         for (Long matchId : matchIds) {
             DocumentOutboundCommand documentOutboundCommand = new DocumentOutboundCommand();
+            documentOutboundCommand.setAction(documentCRUDCommand.getAction());
             documentOutboundCommand.setDocumentType(elasticIndexMetadata.getDocumentType());
             documentOutboundCommand.setVersion(elasticIndexMetadata.getVersion());
 

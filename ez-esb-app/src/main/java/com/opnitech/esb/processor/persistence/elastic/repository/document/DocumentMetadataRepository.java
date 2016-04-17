@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
 
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
-import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.ElasticQueryBuilderFactory;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.ElasticRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;

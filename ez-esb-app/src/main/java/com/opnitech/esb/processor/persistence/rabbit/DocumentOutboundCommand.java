@@ -3,7 +3,8 @@ package com.opnitech.esb.processor.persistence.rabbit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMetadata;
+import com.opnitech.esb.processor.persistence.elastic.model.client.CRUDActionEnum;
+import com.opnitech.esb.processor.persistence.elastic.model.client.DocumentMetadata;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -13,6 +14,8 @@ import com.opnitech.esb.processor.persistence.elastic.model.document.DocumentMet
 public class DocumentOutboundCommand extends Command {
 
     private static final long serialVersionUID = 416704714172458307L;
+
+    private CRUDActionEnum action;
 
     private String documentType;
     private String version;
@@ -74,5 +77,15 @@ public class DocumentOutboundCommand extends Command {
     public void setSubscriptionId(long subscriptionId) {
 
         this.subscriptionId = subscriptionId;
+    }
+
+    public CRUDActionEnum getAction() {
+
+        return this.action;
+    }
+
+    public void setAction(CRUDActionEnum action) {
+
+        this.action = action;
     }
 }

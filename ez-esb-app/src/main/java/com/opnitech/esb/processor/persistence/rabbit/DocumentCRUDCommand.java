@@ -3,6 +3,7 @@ package com.opnitech.esb.processor.persistence.rabbit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.opnitech.esb.processor.persistence.elastic.model.client.CRUDActionEnum;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
