@@ -309,6 +309,7 @@
 	</build>
 
 	<modules>
+		<module>ez-esb-api</module>
 		<module>ez-esb-app</module>
 	</modules>
 </project>
