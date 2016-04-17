@@ -10,11 +10,11 @@
 	</parent>
 
 	<groupId>com.opnitech.esb</groupId>
-	<artifactId>ez-bus</artifactId>
+	<artifactId>ez-esb</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>ez-bus</name>
+	<name>ez-esb</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -309,6 +309,6 @@
 	</build>
 
 	<modules>
-		<module>ez-esb-processor</module>
+		<module>ez-esb-app</module>
 	</modules>
 </project>
