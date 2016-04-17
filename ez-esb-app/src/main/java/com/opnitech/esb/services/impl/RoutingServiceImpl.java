@@ -1,6 +1,7 @@
 package com.opnitech.esb.services.impl;
 
 import com.opnitech.esb.client.model.notification.DocumentChangeNotification;
+import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.common.exception.ServiceException;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
@@ -12,7 +13,6 @@ import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.services.RoutingService;
 import com.opnitech.esb.services.impl.routes.connection.RouteConnection;
 import com.opnitech.esb.services.impl.routes.connection.RouteConnectionContainer;
-import com.opnitech.esb.utils.JSONUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

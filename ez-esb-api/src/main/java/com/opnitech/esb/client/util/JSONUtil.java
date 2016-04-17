@@ -1,4 +1,4 @@
-package com.opnitech.esb.utils;
+package com.opnitech.esb.client.util;
 
 import java.io.IOException;
 

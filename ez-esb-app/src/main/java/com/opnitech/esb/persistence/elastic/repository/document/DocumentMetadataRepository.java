@@ -6,12 +6,12 @@ import org.elasticsearch.search.SearchHit;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
 
+import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.repository.shared.ElasticQueryBuilderFactory;
 import com.opnitech.esb.persistence.elastic.repository.shared.ElasticRepository;
 import com.opnitech.esb.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;
-import com.opnitech.esb.utils.JSONUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

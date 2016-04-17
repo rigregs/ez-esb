@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 
+import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.common.exception.ServiceException;
 import com.opnitech.esb.configuration.route.RabbitRouteConfiguration;
 import com.opnitech.esb.configuration.route.RouteConfiguration;
 import com.opnitech.esb.persistence.jpa.model.consumer.Subscription;
 import com.opnitech.esb.services.impl.routes.connection.RabbitRouteConnection;
 import com.opnitech.esb.services.impl.routes.connection.RouteConnection;
-import com.opnitech.esb.utils.JSONUtil;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
