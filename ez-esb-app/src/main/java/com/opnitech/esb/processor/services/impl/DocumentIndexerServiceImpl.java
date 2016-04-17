@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
+import com.opnitech.esb.processor.persistence.elastic.model.client.CRUDActionEnum;
 import com.opnitech.esb.processor.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
@@ -48,6 +49,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON) {
 
         DocumentCRUDCommand documentCRUDCommand = new DocumentCRUDCommand();
+        documentCRUDCommand.setAction(CRUDActionEnum.UPDATE);
         documentCRUDCommand.setDocumentId(documentId);
         documentCRUDCommand.setVersion(version);
         documentCRUDCommand.setDocumentType(documentType);
