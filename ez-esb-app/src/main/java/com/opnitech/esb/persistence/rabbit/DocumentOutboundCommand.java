@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.opnitech.esb.client.model.shared.ActionEnum;
+import com.opnitech.esb.client.v1.model.shared.ActionEnum;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 
 /**

@@ -2,7 +2,7 @@ package com.opnitech.esb.events;
 
 import org.apache.camel.Handler;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.services.RoutingService;
 

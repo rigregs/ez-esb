@@ -1,7 +1,7 @@
 package com.opnitech.esb.services;
 
-import com.opnitech.esb.client.model.inbound.DocumentCRUDCommand;
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
+import com.opnitech.esb.client.v1.model.inbound.DocumentCRUDCommand;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

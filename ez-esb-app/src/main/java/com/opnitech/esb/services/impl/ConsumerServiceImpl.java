@@ -11,8 +11,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
-import com.opnitech.esb.common.exception.ServiceException;
 import com.opnitech.esb.persistence.elastic.model.document.PercolatorMetadata;
 import com.opnitech.esb.persistence.elastic.model.document.PercolatorOwner;
 import com.opnitech.esb.persistence.elastic.repository.document.PercolatorRepository;

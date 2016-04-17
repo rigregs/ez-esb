@@ -1,4 +1,4 @@
-package com.opnitech.esb.client.model.shared;
+package com.opnitech.esb.client.v1.model.shared;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

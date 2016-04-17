@@ -1,4 +1,4 @@
-package com.opnitech.esb.controllers.shared;
+package com.opnitech.esb.client.controller;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora

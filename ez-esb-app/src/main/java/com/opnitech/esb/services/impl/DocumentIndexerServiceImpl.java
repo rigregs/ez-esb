@@ -7,10 +7,10 @@ import java.util.Objects;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
-import com.opnitech.esb.client.model.inbound.DocumentCRUDCommand;
-import com.opnitech.esb.client.model.shared.ActionEnum;
+import com.opnitech.esb.client.exception.ServiceException;
+import com.opnitech.esb.client.v1.model.inbound.DocumentCRUDCommand;
+import com.opnitech.esb.client.v1.model.shared.ActionEnum;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
-import com.opnitech.esb.common.exception.ServiceException;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;

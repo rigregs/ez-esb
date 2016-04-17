@@ -1,6 +1,6 @@
 package com.opnitech.esb.services;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 
 /**

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.persistence.jpa.model.consumer.Subscription;
 import com.opnitech.esb.services.impl.routes.factory.RouteConnectionFactory;
 

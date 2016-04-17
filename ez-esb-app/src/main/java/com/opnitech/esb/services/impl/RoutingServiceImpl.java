@@ -1,9 +1,9 @@
 package com.opnitech.esb.services.impl;
 
-import com.opnitech.esb.client.model.notification.DocumentChangeNotification;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.client.util.JSONUtil;
+import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
-import com.opnitech.esb.common.exception.ServiceException;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticSourceDocument;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;

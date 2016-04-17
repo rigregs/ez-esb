@@ -38,6 +38,7 @@
 		<!-- Apache commons -->
 		<commons-lang3.version>3.4</commons-lang3.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
+		<commons-logging.version>1.2</commons-logging.version>
 
 		<!-- Plugins -->
 		<jaxb2-maven-plugin.version>1.5</jaxb2-maven-plugin.version>
@@ -64,6 +65,12 @@
 
 		<!-- Jackson -->
 		<jackson.version>2.6.5</jackson.version>
+
+		<!-- JUnit -->
+		<junit.version>4.12</junit.version>
+
+		<!-- slf4j -->
+		<slf4j.version>1.7.21</slf4j.version>
 	</properties>
 
 	<dependencyManagement>
@@ -179,6 +186,12 @@
 				<scope>test</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${commons-logging.version}</version>
+			</dependency>
+
 			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -268,6 +281,22 @@
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
+
+			<!-- JUnit -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- slf4j -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

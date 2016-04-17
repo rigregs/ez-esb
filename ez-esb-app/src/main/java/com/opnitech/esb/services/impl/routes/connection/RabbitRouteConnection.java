@@ -2,7 +2,7 @@ package com.opnitech.esb.services.impl.routes.connection;
 
 import org.apache.camel.RoutesBuilder;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.configuration.route.RabbitRouteConfiguration;
 import com.opnitech.esb.utils.RouteBuilderUtil;
 

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.controller.ControllerResult;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.controllers.shared.AbstractServerRestController;
-import com.opnitech.esb.controllers.shared.ControllerResult;
 import com.opnitech.esb.services.DocumentIndexerService;
 
 /**

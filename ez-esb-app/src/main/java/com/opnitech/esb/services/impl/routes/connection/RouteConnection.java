@@ -6,7 +6,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.lang3.StringUtils;
 
-import com.opnitech.esb.common.exception.ServiceException;
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.configuration.route.RouteConfiguration;
 
 /**

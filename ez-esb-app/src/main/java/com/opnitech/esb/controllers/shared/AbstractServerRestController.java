@@ -3,6 +3,9 @@ package com.opnitech.esb.controllers.shared;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.opnitech.esb.client.controller.ControllerResult;
+import com.opnitech.esb.client.controller.ControllerResultEnum;
+
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
