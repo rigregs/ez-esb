@@ -29,17 +29,17 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     private static final int MIN_SEQUECE_LENGHT = 20;
 
     private final DocumentRepository documentRepository;
-    private final DocumentMetadataRepository elasticIndexMetadataRepository;
+    private final DocumentMetadataRepository documentMetadataRepository;
     private final ProducerTemplate producerTemplate;
     private final IndexMetadataCache indexMetadataCache;
     private final PercolatorRepository percolatorRepository;
 
     public DocumentIndexerServiceImpl(DocumentRepository documentRepository,
-            DocumentMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate,
+            DocumentMetadataRepository documentMetadataRepository, ProducerTemplate producerTemplate,
             IndexMetadataCache indexMetadataCache, PercolatorRepository percolatorRepository) {
 
         this.documentRepository = documentRepository;
-        this.elasticIndexMetadataRepository = elasticIndexMetadataRepository;
+        this.documentMetadataRepository = documentMetadataRepository;
         this.producerTemplate = producerTemplate;
         this.indexMetadataCache = indexMetadataCache;
         this.percolatorRepository = percolatorRepository;
@@ -48,19 +48,39 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     @Override
     public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON) {
 
+        ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(version, documentType);
+
+        DocumentMetadata documentMetadata = resolveElasticDocumentMetadata(false, elasticIndexMetadata, documentId);
+
         DocumentCRUDCommand documentCRUDCommand = new DocumentCRUDCommand();
-        documentCRUDCommand.setAction(ActionEnum.UPDATE);
+        documentCRUDCommand.setAction(documentMetadata != null
+                ? ActionEnum.UPDATE
+                : ActionEnum.INSERT);
         documentCRUDCommand.setDocumentId(documentId);
         documentCRUDCommand.setVersion(version);
         documentCRUDCommand.setDocumentType(documentType);
         documentCRUDCommand.setDocumentAsJSON(documentAsJSON);
 
-        updateSequence(documentCRUDCommand);
+        updateSequenceIfNeeded(documentCRUDCommand);
 
         this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(INBOUND_SEND_CAMEL_ROUTE), documentCRUDCommand);
     }
 
-    private void updateSequence(DocumentCRUDCommand documentCRUDCommand) {
+    @Override
+    public void queueDeleteDocument(String version, String documentType, String documentId) throws ServiceException {
+
+        DocumentCRUDCommand documentCRUDCommand = new DocumentCRUDCommand();
+        documentCRUDCommand.setAction(ActionEnum.DELETE);
+        documentCRUDCommand.setDocumentId(documentId);
+        documentCRUDCommand.setVersion(version);
+        documentCRUDCommand.setDocumentType(documentType);
+
+        updateSequenceIfNeeded(documentCRUDCommand);
+
+        this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(INBOUND_SEND_CAMEL_ROUTE), documentCRUDCommand);
+    }
+
+    private void updateSequenceIfNeeded(DocumentCRUDCommand documentCRUDCommand) {
 
         if (StringUtils.isBlank(documentCRUDCommand.getSequence())) {
 
@@ -74,16 +94,16 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     }
 
     @Override
-    public void updateDocument(DocumentCRUDCommand documentCRUDCommand) throws ServiceException {
+    public void processDocumentCommand(DocumentCRUDCommand documentCRUDCommand) throws ServiceException {
 
-        updateSequence(documentCRUDCommand);
+        updateSequenceIfNeeded(documentCRUDCommand);
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(documentCRUDCommand.getVersion(),
                 documentCRUDCommand.getDocumentType());
 
         this.indexMetadataCache.guaranteeIndexExists(elasticIndexMetadata);
 
-        DocumentMetadata documentMetadata = resolveElasticDocumentMetadata(elasticIndexMetadata,
+        DocumentMetadata documentMetadata = resolveElasticDocumentMetadata(true, elasticIndexMetadata,
                 documentCRUDCommand.getDocumentId());
 
         String newDocumentSequence = StringUtils.trimToEmpty(documentCRUDCommand.getSequence());
@@ -118,6 +138,34 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
             DocumentMetadata documentMetadata) throws ServiceException {
 
+        if (Objects.equals(ActionEnum.INSERT, documentCRUDCommand.getAction())
+                || Objects.equals(ActionEnum.UPDATE, documentCRUDCommand.getAction())) {
+
+            updateOrInsertDocument(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
+        }
+        else if (Objects.equals(ActionEnum.DELETE, documentCRUDCommand.getAction())) {
+            deleteDocument(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
+        }
+        else {
+            throw new ServiceException("Invalid CRUD action");
+        }
+    }
+
+    private void deleteDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
+            DocumentMetadata documentMetadata) throws ServiceException {
+
+        if (documentMetadata != null) {
+            this.documentRepository.deleteElasticDocumentMetadata(elasticIndexMetadata, documentMetadata);
+            this.documentMetadataRepository.deleteElasticDocumentMetadata(elasticIndexMetadata, documentMetadata);
+
+            notifyConsumers(documentCRUDCommand, elasticIndexMetadata, documentMetadata);
+        }
+
+    }
+
+    private void updateOrInsertDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
+            DocumentMetadata documentMetadata) throws ServiceException {
+
         documentMetadata.setSequence(documentCRUDCommand.getSequence());
 
         String documentAsJSON = documentCRUDCommand.getDocumentAsJSON();
@@ -143,12 +191,13 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
                 documentMetadata);
     }
 
-    private DocumentMetadata resolveElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, String id) {
+    private DocumentMetadata resolveElasticDocumentMetadata(boolean autoCreate, ElasticIndexMetadata elasticIndexMetadata,
+            String id) {
 
-        DocumentMetadata elasticDocumentMetadata = this.elasticIndexMetadataRepository
+        DocumentMetadata elasticDocumentMetadata = this.documentMetadataRepository
                 .retrieveElasticDocumentMetadata(elasticIndexMetadata, id);
 
-        if (elasticDocumentMetadata == null) {
+        if (autoCreate && elasticDocumentMetadata == null) {
             elasticDocumentMetadata = new DocumentMetadata();
             elasticDocumentMetadata.setDocumentId(id);
 

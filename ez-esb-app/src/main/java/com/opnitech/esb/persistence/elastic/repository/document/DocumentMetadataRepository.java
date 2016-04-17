@@ -25,8 +25,7 @@ public class DocumentMetadataRepository extends ElasticRepository {
 
     public DocumentMetadata retrieveElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, String id) {
 
-        ElasticQueryBuilder<DocumentMetadata> builder = ElasticQueryBuilderFactory
-                .booleanBuilder(DocumentMetadata.class);
+        ElasticQueryBuilder<DocumentMetadata> builder = ElasticQueryBuilderFactory.booleanBuilder(DocumentMetadata.class);
 
         builder.andNotNull("documentId", id);
 
@@ -58,5 +57,11 @@ public class DocumentMetadataRepository extends ElasticRepository {
                 });
 
         return elasticDocumentMetadata;
+    }
+
+    public boolean deleteElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, DocumentMetadata documentMetadata) {
+
+        return executeDeleteById(elasticIndexMetadata.getIndexName(), elasticIndexMetadata.getMetadataTypeName(),
+                documentMetadata.getId());
     }
 }

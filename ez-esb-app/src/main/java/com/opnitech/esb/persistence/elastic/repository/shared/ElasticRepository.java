@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
@@ -145,6 +146,13 @@ public abstract class ElasticRepository {
         ElasticSourceDocument elasticSourceDocument = new ElasticSourceDocument(id, sourceAsString, version);
 
         return elasticSourceDocument;
+    }
+
+    protected boolean executeDeleteById(String indexName, String type, String id) {
+
+        DeleteResponse response = this.client.prepareDelete(indexName, type, id).execute().actionGet();
+
+        return response.isFound();
     }
 
     protected <E, R> E executeQuery(String indexName, String type, ElasticQueryBuilder<R> queryBuilder,

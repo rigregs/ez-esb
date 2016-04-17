@@ -38,4 +38,13 @@ public class CollectorController extends AbstractServerRestController {
 
         return buildSuccessControllerResultResponse();
     }
+
+    @RequestMapping(value = "/{version}/{documentType}/{documentId}", method = RequestMethod.DELETE)
+    public @ResponseBody ResponseEntity<ControllerResult> deleteDocument(@PathVariable String version,
+            @PathVariable String documentType, @PathVariable String documentId) throws ServiceException {
+
+        this.documentIndexerService.queueDeleteDocument(version, documentType, documentId);
+
+        return buildSuccessControllerResultResponse();
+    }
 }

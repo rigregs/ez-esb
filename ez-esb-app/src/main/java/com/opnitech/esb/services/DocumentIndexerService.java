@@ -14,5 +14,7 @@ public interface DocumentIndexerService {
     void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON)
             throws ServiceException;
 
-    void updateDocument(DocumentCRUDCommand documentCRUDCommand) throws ServiceException;
+    void processDocumentCommand(DocumentCRUDCommand documentCRUDCommand) throws ServiceException;
+
+    void queueDeleteDocument(String version, String documentType, String documentId) throws ServiceException;
 }

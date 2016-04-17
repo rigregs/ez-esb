@@ -1,8 +1,11 @@
 package com.opnitech.esb.services.impl;
 
+import java.util.Objects;
+
 import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
+import com.opnitech.esb.client.v1.model.shared.ActionEnum;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticSourceDocument;
@@ -40,9 +43,10 @@ public class RoutingServiceImpl implements RoutingService {
         if (subscription != null) {
             DocumentMetadata documentMetadata = documentOutboundCommand.getDocumentMetadata();
 
-            ElasticSourceDocument elasticSourceDocument = this.documentRepository.retrieveDocument(
-                    new ElasticIndexMetadata(documentOutboundCommand.getVersion(), documentOutboundCommand.getDocumentType()),
-                    documentMetadata.getElasticDocumentId());
+            ElasticSourceDocument elasticSourceDocument = !Objects.equals(ActionEnum.DELETE, documentOutboundCommand.getAction())
+                    ? this.documentRepository.retrieveDocument(new ElasticIndexMetadata(documentOutboundCommand.getVersion(),
+                            documentOutboundCommand.getDocumentType()), documentMetadata.getElasticDocumentId())
+                    : null;
 
             RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
 
@@ -50,8 +54,12 @@ public class RoutingServiceImpl implements RoutingService {
                     documentOutboundCommand.getAction(), documentOutboundCommand.getDocumentType(),
                     documentMetadata.getDocumentId(), documentOutboundCommand.getVersion(),
                     documentMetadata.getElasticDocumentId(), documentMetadata.getSequence(),
-                    documentMetadata.getDocumentCheckSum(), elasticSourceDocument.getObjectAsJSON(),
-                    elasticSourceDocument.getVersion());
+                    documentMetadata.getDocumentCheckSum(), elasticSourceDocument != null
+                            ? elasticSourceDocument.getObjectAsJSON()
+                            : null,
+                    elasticSourceDocument != null
+                            ? elasticSourceDocument.getVersion()
+                            : null);
 
             String documentChangeNotificationAsJSON = JSONUtil.marshall(documentChangeNotification);
 

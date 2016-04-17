@@ -3,6 +3,7 @@ package com.opnitech.esb.persistence.elastic.repository.document;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
+import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticSourceDocument;
 import com.opnitech.esb.persistence.elastic.repository.shared.ElasticRepository;
 
@@ -21,5 +22,11 @@ public class DocumentRepository extends ElasticRepository {
                 elasticIndexMetadata.getDocumentTypeName(), id);
 
         return elasticSourceDocument;
+    }
+
+    public boolean deleteElasticDocumentMetadata(ElasticIndexMetadata elasticIndexMetadata, DocumentMetadata documentMetadata) {
+
+        return executeDeleteById(elasticIndexMetadata.getIndexName(), elasticIndexMetadata.getDocumentTypeName(),
+                documentMetadata.getElasticDocumentId());
     }
 }

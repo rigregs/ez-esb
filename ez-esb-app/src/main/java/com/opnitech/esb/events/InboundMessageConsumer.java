@@ -20,6 +20,6 @@ public class InboundMessageConsumer {
     @Handler
     public void consume(DocumentCRUDCommand documentCRUDCommand) throws ServiceException {
 
-        this.documentIndexerService.updateDocument(documentCRUDCommand);
+        this.documentIndexerService.processDocumentCommand(documentCRUDCommand);
     }
 }
