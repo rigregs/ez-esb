@@ -81,8 +81,14 @@ public final class RouteBuilderUtil {
                     @Override
                     public void configure() throws Exception {
 
-                        from(fromRouteURI).log("Notification Source: ${body}").setBody().groovy(transformationTemplate)
-                                .log("Notification: ${body}").to(toRouteURI);
+                        String logRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_log").toString());
+                        String notificationRoute = fromDirect(
+                                new StringBuffer().append(toRouteURI).append("_notification").toString());
+
+                        from(fromRouteURI).multicast().to(logRoute, notificationRoute);
+
+                        from(logRoute).marshal().json(JsonLibrary.Jackson).log("Notification: ${body}");
+                        from(notificationRoute).setBody().groovy(transformationTemplate).to(toRouteURI);
                     }
                 };
 
