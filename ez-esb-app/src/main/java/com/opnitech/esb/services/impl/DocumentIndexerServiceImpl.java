@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.client.v1.model.inbound.DocumentCRUDCommand;
@@ -29,6 +30,7 @@ import com.opnitech.esb.utils.RouteBuilderUtil;
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
+@Transactional
 public class DocumentIndexerServiceImpl implements DocumentIndexerService {
 
     private static final int MIN_SEQUECE_LENGHT = 20;

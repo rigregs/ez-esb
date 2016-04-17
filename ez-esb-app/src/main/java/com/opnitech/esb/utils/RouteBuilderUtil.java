@@ -55,6 +55,23 @@ public final class RouteBuilderUtil {
         return routeBuilder;
     }
 
+    public static RouteBuilder createGroovyRouteBuilder(String fromURI, String toURI, String transformationTemplate) {
+
+        final String fromRouteURI = fromDirect(fromURI);
+        final String toRouteURI = fromDirect(toURI);
+
+        RouteBuilder routeBuilder = new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+
+                from(fromRouteURI).to(toRouteURI);
+            }
+        };
+
+        return routeBuilder;
+    }
+
     public static String fromDirect(final String directId) {
 
         return MessageFormat.format("direct:{0}", directId);

@@ -11,13 +11,15 @@ import com.opnitech.esb.utils.RouteBuilderUtil;
  */
 public class RabbitRouteConnection extends RouteConnection<RabbitRouteConfiguration> {
 
-    public RabbitRouteConnection(String fromURI, RabbitRouteConfiguration rabbitRouteConfiguration) throws ServiceException {
-        super(fromURI, RouteBuilderUtil.fromDirect(fromURI), rabbitRouteConfiguration);
+    public RabbitRouteConnection(String fromURI, RabbitRouteConfiguration rabbitRouteConfiguration, String transformationTemplate)
+            throws ServiceException {
+
+        super(fromURI, rabbitRouteConfiguration, transformationTemplate);
     }
 
     @Override
-    protected RoutesBuilder createCamelRoute() {
+    protected RoutesBuilder createEndpointCamelRoute(String fromRoute) {
 
-        return RouteBuilderUtil.createSendRabbitRouteBuilder(getFromURI(), getRouteConfiguration());
+        return RouteBuilderUtil.createSendRabbitRouteBuilder(fromRoute, getRouteConfiguration());
     }
 }

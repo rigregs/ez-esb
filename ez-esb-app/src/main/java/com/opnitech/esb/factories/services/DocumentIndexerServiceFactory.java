@@ -3,6 +3,7 @@ package com.opnitech.esb.factories.services;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
@@ -16,6 +17,7 @@ import com.opnitech.esb.services.impl.DocumentIndexerServiceImpl;
  * @author Rigre Gregorio Garciandia Sonora
  */
 @Configuration
+@EnableTransactionManagement
 public class DocumentIndexerServiceFactory {
 
     public DocumentIndexerServiceFactory() {

@@ -42,26 +42,47 @@ public class RoutingServiceImpl implements RoutingService {
         if (subscription != null) {
             DocumentMetadata documentMetadata = documentOutboundCommand.getDocumentMetadata();
 
-            ElasticSourceDocument elasticSourceDocument = !Objects.equals(ActionEnum.DELETE, documentOutboundCommand.getAction())
-                    ? this.documentRepository.retrieveDocument(new ElasticIndexMetadata(documentOutboundCommand.getVersion(),
-                            documentOutboundCommand.getDocumentType()), documentMetadata.getElasticDocumentId())
-                    : null;
+            ElasticSourceDocument elasticSourceDocument = resolveElasticSourceDocument(documentOutboundCommand, documentMetadata);
 
-            RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
+            String documentChangeNotificationAsJSON = createDocumentChangeNotificationAsJSON(documentOutboundCommand,
+                    documentMetadata, elasticSourceDocument);
 
-            DocumentChangeNotification documentChangeNotification = new DocumentChangeNotification(
-                    documentOutboundCommand.getAction(), documentOutboundCommand.getDocumentType(),
-                    documentMetadata.getDocumentId(), documentOutboundCommand.getVersion(),
-                    documentMetadata.getElasticDocumentId(), elasticSourceDocument != null
-                            ? elasticSourceDocument.getObjectAsJSON()
-                            : null,
-                    elasticSourceDocument != null
-                            ? elasticSourceDocument.getVersion()
-                            : null);
-
-            String documentChangeNotificationAsJSON = JSONUtil.marshall(documentChangeNotification);
-
-            routeConnection.send(documentChangeNotificationAsJSON);
+            sendNotification(subscription, documentChangeNotificationAsJSON);
         }
+    }
+
+    private void sendNotification(Subscription subscription, String documentChangeNotificationAsJSON) throws ServiceException {
+
+        RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
+
+        routeConnection.send(documentChangeNotificationAsJSON);
+    }
+
+    private String createDocumentChangeNotificationAsJSON(DocumentOutboundCommand documentOutboundCommand,
+            DocumentMetadata documentMetadata, ElasticSourceDocument elasticSourceDocument) {
+
+        DocumentChangeNotification documentChangeNotification = new DocumentChangeNotification(
+                documentOutboundCommand.getAction(), documentOutboundCommand.getDocumentType(), documentMetadata.getDocumentId(),
+                documentOutboundCommand.getVersion(), documentMetadata.getElasticDocumentId(), elasticSourceDocument != null
+                        ? elasticSourceDocument.getObjectAsJSON()
+                        : null,
+                elasticSourceDocument != null
+                        ? elasticSourceDocument.getVersion()
+                        : null);
+
+        String documentChangeNotificationAsJSON = JSONUtil.marshall(documentChangeNotification);
+
+        return documentChangeNotificationAsJSON;
+    }
+
+    private ElasticSourceDocument resolveElasticSourceDocument(DocumentOutboundCommand documentOutboundCommand,
+            DocumentMetadata documentMetadata) {
+
+        ElasticSourceDocument elasticSourceDocument = !Objects.equals(ActionEnum.DELETE, documentOutboundCommand.getAction())
+                ? this.documentRepository.retrieveDocument(
+                        new ElasticIndexMetadata(documentOutboundCommand.getVersion(), documentOutboundCommand.getDocumentType()),
+                        documentMetadata.getElasticDocumentId())
+                : null;
+        return elasticSourceDocument;
     }
 }

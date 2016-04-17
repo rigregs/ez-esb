@@ -37,7 +37,7 @@ public class RouteConnectionFactory {
         RouteConnectionBuilder<?, ?> routeConnectionBuilder = BUILDERS.get(routeConfiguration.getClass());
         Validate.notNull(routeConnectionBuilder);
 
-        return routeConnectionBuilder.build(fromURI, routeConfiguration);
+        return routeConnectionBuilder.build(fromURI, routeConfiguration, subscription.getTransformationTemplate());
     }
 
     private static abstract class RouteConnectionBuilder<R extends RouteConfiguration, C extends RouteConnection<R>> {
@@ -46,14 +46,15 @@ public class RouteConnectionFactory {
             // Default constructor
         }
 
-        protected abstract C doBuild(String fromURI, R routeConfiguration) throws ServiceException;
+        protected abstract C doBuild(String fromURI, R routeConfiguration, String transformationTemplate) throws ServiceException;
 
-        public RouteConnection<?> build(String fromURI, RouteConfiguration routeConfiguration) throws ServiceException {
+        public RouteConnection<?> build(String fromURI, RouteConfiguration routeConfiguration, String transformationTemplate)
+                throws ServiceException {
 
             @SuppressWarnings("unchecked")
             R r = (R) routeConfiguration;
 
-            return doBuild(fromURI, r);
+            return doBuild(fromURI, r, transformationTemplate);
         }
     }
 
@@ -65,10 +66,11 @@ public class RouteConnectionFactory {
         }
 
         @Override
-        protected RabbitRouteConnection doBuild(String fromURI, RabbitRouteConfiguration routeConfiguration)
-                throws ServiceException {
+        protected RabbitRouteConnection doBuild(String fromURI, RabbitRouteConfiguration routeConfiguration,
+                String transformationTemplate) throws ServiceException {
 
-            RabbitRouteConnection rabbitRouteConnection = new RabbitRouteConnection(fromURI, routeConfiguration);
+            RabbitRouteConnection rabbitRouteConnection = new RabbitRouteConnection(fromURI, routeConfiguration,
+                    transformationTemplate);
 
             return rabbitRouteConnection;
         }
