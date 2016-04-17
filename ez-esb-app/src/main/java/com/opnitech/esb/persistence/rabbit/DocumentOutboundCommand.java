@@ -1,9 +1,11 @@
 package com.opnitech.esb.persistence.rabbit;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.opnitech.esb.persistence.elastic.model.client.CRUDActionEnum;
+import com.opnitech.esb.client.model.shared.ActionEnum;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 
 /**
@@ -11,11 +13,11 @@ import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DocumentOutboundCommand extends Command {
+public class DocumentOutboundCommand implements Serializable {
 
     private static final long serialVersionUID = 416704714172458307L;
 
-    private CRUDActionEnum action;
+    private ActionEnum action;
 
     private String documentType;
     private String version;
@@ -79,12 +81,12 @@ public class DocumentOutboundCommand extends Command {
         this.subscriptionId = subscriptionId;
     }
 
-    public CRUDActionEnum getAction() {
+    public ActionEnum getAction() {
 
         return this.action;
     }
 
-    public void setAction(CRUDActionEnum action) {
+    public void setAction(ActionEnum action) {
 
         this.action = action;
     }

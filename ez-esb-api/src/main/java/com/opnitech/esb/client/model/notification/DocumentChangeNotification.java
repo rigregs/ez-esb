@@ -1,10 +1,11 @@
-package com.opnitech.esb.persistence.elastic.model.client;
+package com.opnitech.esb.client.model.notification;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.opnitech.esb.client.model.shared.ActionEnum;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
@@ -15,7 +16,7 @@ public class DocumentChangeNotification implements Serializable {
 
     private static final long serialVersionUID = 6761241065475982761L;
 
-    private CRUDActionEnum action;
+    private ActionEnum action;
 
     private String documentType;
     private String documentId;
@@ -31,7 +32,7 @@ public class DocumentChangeNotification implements Serializable {
         // Default constructor
     }
 
-    public DocumentChangeNotification(CRUDActionEnum action, String documentType, String documentId, String documentVersion,
+    public DocumentChangeNotification(ActionEnum action, String documentType, String documentId, String documentVersion,
             String documentInternalId, String documentInternalSequence, String documentCheckSum, String documentAsJSON,
             Long version) {
         this.action = action;
@@ -65,12 +66,12 @@ public class DocumentChangeNotification implements Serializable {
         this.version = version;
     }
 
-    public CRUDActionEnum getAction() {
+    public ActionEnum getAction() {
 
         return this.action;
     }
 
-    public void setAction(CRUDActionEnum action) {
+    public void setAction(ActionEnum action) {
 
         this.action = action;
     }

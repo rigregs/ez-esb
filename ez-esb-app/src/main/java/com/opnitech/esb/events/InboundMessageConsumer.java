@@ -2,8 +2,8 @@ package com.opnitech.esb.events;
 
 import org.apache.camel.Handler;
 
+import com.opnitech.esb.client.model.inbound.DocumentCRUDCommand;
 import com.opnitech.esb.common.exception.ServiceException;
-import com.opnitech.esb.persistence.rabbit.DocumentCRUDCommand;
 import com.opnitech.esb.services.DocumentIndexerService;
 
 /**

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.opnitech.esb.client.model.inbound.DocumentCRUDCommand;
 import com.opnitech.esb.configuration.PropertyPlaceholder;
-import com.opnitech.esb.persistence.rabbit.DocumentCRUDCommand;
 import com.opnitech.esb.services.DocumentIndexerService;
 import com.opnitech.esb.utils.RouteBuilderUtil;
 

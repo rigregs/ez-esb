@@ -14,6 +14,14 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+		<!-- esb -->
+		<dependency>
+			<groupId>com.opnitech.esb</groupId>
+			<artifactId>ez-esb-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Spring boot -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -162,6 +170,13 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
 		</dependency>
+
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

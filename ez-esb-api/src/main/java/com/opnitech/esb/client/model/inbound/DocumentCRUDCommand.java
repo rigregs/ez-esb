@@ -1,16 +1,18 @@
-package com.opnitech.esb.persistence.rabbit;
+package com.opnitech.esb.client.model.inbound;
+
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.opnitech.esb.persistence.elastic.model.client.CRUDActionEnum;
+import com.opnitech.esb.client.model.shared.ActionEnum;
 
 /**
  * @author Rigre Gregorio Garciandia Sonora
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DocumentCRUDCommand extends Command {
+public class DocumentCRUDCommand implements Serializable {
 
     private static final long serialVersionUID = -6894247249612121598L;
 
@@ -19,7 +21,7 @@ public class DocumentCRUDCommand extends Command {
     private String version;
 
     private String documentAsJSON;
-    private CRUDActionEnum action;
+    private ActionEnum action;
 
     private String sequence;
 
@@ -37,12 +39,12 @@ public class DocumentCRUDCommand extends Command {
         this.documentAsJSON = documentAsJSON;
     }
 
-    public CRUDActionEnum getAction() {
+    public ActionEnum getAction() {
 
         return this.action;
     }
 
-    public void setAction(CRUDActionEnum action) {
+    public void setAction(ActionEnum action) {
 
         this.action = action;
     }

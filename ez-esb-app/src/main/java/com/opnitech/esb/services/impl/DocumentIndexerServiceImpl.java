@@ -7,14 +7,14 @@ import java.util.Objects;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
+import com.opnitech.esb.client.model.inbound.DocumentCRUDCommand;
+import com.opnitech.esb.client.model.shared.ActionEnum;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.common.exception.ServiceException;
-import com.opnitech.esb.persistence.elastic.model.client.CRUDActionEnum;
 import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.PercolatorRepository;
-import com.opnitech.esb.persistence.rabbit.DocumentCRUDCommand;
 import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.services.DocumentIndexerService;
 import com.opnitech.esb.services.cache.IndexMetadataCache;
@@ -49,7 +49,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON) {
 
         DocumentCRUDCommand documentCRUDCommand = new DocumentCRUDCommand();
-        documentCRUDCommand.setAction(CRUDActionEnum.UPDATE);
+        documentCRUDCommand.setAction(ActionEnum.UPDATE);
         documentCRUDCommand.setDocumentId(documentId);
         documentCRUDCommand.setVersion(version);
         documentCRUDCommand.setDocumentType(documentType);
