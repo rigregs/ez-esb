@@ -3,7 +3,6 @@ package com.opnitech.esb.services.impl;
 import java.util.Objects;
 
 import com.opnitech.esb.client.exception.ServiceException;
-import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
 import com.opnitech.esb.client.v1.model.shared.ActionEnum;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
@@ -44,21 +43,15 @@ public class RoutingServiceImpl implements RoutingService {
 
             ElasticSourceDocument elasticSourceDocument = resolveElasticSourceDocument(documentOutboundCommand, documentMetadata);
 
-            String documentChangeNotificationAsJSON = createDocumentChangeNotificationAsJSON(documentOutboundCommand,
+            DocumentChangeNotification documentChangeNotification = createDocumentChangeNotification(documentOutboundCommand,
                     documentMetadata, elasticSourceDocument);
 
-            sendNotification(subscription, documentChangeNotificationAsJSON);
+            RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
+            routeConnection.send(documentChangeNotification);
         }
     }
 
-    private void sendNotification(Subscription subscription, String documentChangeNotificationAsJSON) throws ServiceException {
-
-        RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
-
-        routeConnection.send(documentChangeNotificationAsJSON);
-    }
-
-    private String createDocumentChangeNotificationAsJSON(DocumentOutboundCommand documentOutboundCommand,
+    private DocumentChangeNotification createDocumentChangeNotification(DocumentOutboundCommand documentOutboundCommand,
             DocumentMetadata documentMetadata, ElasticSourceDocument elasticSourceDocument) {
 
         DocumentChangeNotification documentChangeNotification = new DocumentChangeNotification(
@@ -70,9 +63,7 @@ public class RoutingServiceImpl implements RoutingService {
                         ? elasticSourceDocument.getVersion()
                         : null);
 
-        String documentChangeNotificationAsJSON = JSONUtil.marshall(documentChangeNotification);
-
-        return documentChangeNotificationAsJSON;
+        return documentChangeNotification;
     }
 
     private ElasticSourceDocument resolveElasticSourceDocument(DocumentOutboundCommand documentOutboundCommand,

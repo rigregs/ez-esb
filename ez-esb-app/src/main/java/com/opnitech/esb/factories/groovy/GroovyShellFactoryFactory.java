@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.client.util.JSONUtil;
+import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
 
 import groovy.lang.GroovyShell;
 
@@ -31,6 +32,8 @@ public class GroovyShellFactoryFactory {
 
                 ImportCustomizer importCustomizer = new ImportCustomizer();
                 importCustomizer.addStaticStars(JSONUtil.class.getName());
+
+                importCustomizer.addImports(DocumentChangeNotification.class.getName());
 
                 CompilerConfiguration configuration = new CompilerConfiguration();
                 configuration.addCompilationCustomizers(importCustomizer);

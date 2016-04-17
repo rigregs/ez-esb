@@ -6,9 +6,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.lang3.StringUtils;
 
 import com.opnitech.esb.client.exception.ServiceException;
+import com.opnitech.esb.client.v1.model.notification.DocumentChangeNotification;
 import com.opnitech.esb.configuration.route.RouteConfiguration;
 import com.opnitech.esb.utils.RouteBuilderUtil;
 
@@ -95,10 +95,11 @@ public abstract class RouteConnection<R extends RouteConfiguration> {
         }
     }
 
-    public void send(String objectAsJSON) {
+    public void send(DocumentChangeNotification documentChangeNotification) {
 
-        if (StringUtils.isNotBlank(objectAsJSON)) {
-            this.endpointProducerTemplate.sendBody(RouteBuilderUtil.fromDirect(createEndpointFromRoute()), objectAsJSON);
+        if (documentChangeNotification != null) {
+            this.endpointProducerTemplate.sendBody(RouteBuilderUtil.fromDirect(createTrasnformationFromRoute()),
+                    documentChangeNotification);
         }
     }
 
