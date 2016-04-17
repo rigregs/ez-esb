@@ -85,7 +85,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
                 documentCRUDCommand.getDocumentId());
 
         String newDocumentSequence = StringUtils.trimToEmpty(documentCRUDCommand.getSequence());
-        String oldDocumentSequence = StringUtils.trimToEmpty(documentMetadata.getSequnce());
+        String oldDocumentSequence = StringUtils.trimToEmpty(documentMetadata.getSequence());
 
         if (newDocumentSequence.compareTo(oldDocumentSequence) >= 0) {
 
@@ -115,7 +115,7 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
             DocumentMetadata documentMetadata) throws ServiceException {
 
-        documentMetadata.setSequnce(documentCRUDCommand.getSequence());
+        documentMetadata.setSequence(documentCRUDCommand.getSequence());
 
         String documentAsJSON = documentCRUDCommand.getDocumentAsJSON();
 

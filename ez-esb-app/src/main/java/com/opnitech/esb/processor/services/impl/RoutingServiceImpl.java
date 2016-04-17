@@ -2,6 +2,7 @@ package com.opnitech.esb.processor.services.impl;
 
 import com.opnitech.esb.processor.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.processor.common.exception.ServiceException;
+import com.opnitech.esb.processor.persistence.elastic.model.shared.ElasticSourceDocument;
 import com.opnitech.esb.processor.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.processor.persistence.jpa.model.consumer.Subscription;
 import com.opnitech.esb.processor.persistence.jpa.repository.subscriber.SubscriptionRepository;
@@ -34,13 +35,13 @@ public class RoutingServiceImpl implements RoutingService {
                 .findSubscriptionOwnMatchQuery(documentOutboundCommand.getMatchQueryId());
 
         if (subscription != null) {
-            String documentAsJSON = this.documentRepository.retrieveDocument(
+            ElasticSourceDocument elasticSourceDocument = this.documentRepository.retrieveDocument(
                     new ElasticIndexMetadata(documentOutboundCommand.getVersion(), documentOutboundCommand.getDocumentType()),
                     documentOutboundCommand.getDocumentMetadata().getElasticDocumentId());
 
             RouteConnection<?> routeConnection = this.routeConnectionContainer.resolveRouteConnection(subscription);
 
-            routeConnection.send(documentAsJSON);
+            routeConnection.send(elasticSourceDocument.getObjectAsJSON());
         }
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 import com.opnitech.esb.processor.common.exception.ServiceException;
 import com.opnitech.esb.processor.persistence.elastic.model.shared.ElasticDocument;
+import com.opnitech.esb.processor.persistence.elastic.model.shared.ElasticSourceDocument;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticExecutionQueryBuilder;
 import com.opnitech.esb.processor.persistence.elastic.repository.shared.queries.ElasticQueryBuilder;
 import com.opnitech.esb.processor.utils.JSONUtil;
@@ -134,11 +135,16 @@ public abstract class ElasticRepository {
         this.client.prepareIndex(indexName, type, id).setSource(objectAsJSON).setRefresh(true).get();
     }
 
-    protected String executeGetById(String indexName, String type, String id) {
+    protected ElasticSourceDocument executeGetById(String indexName, String type, String id) {
 
         GetResponse response = this.client.prepareGet(indexName, type, id).execute().actionGet();
 
-        return response.getSourceAsString();
+        String sourceAsString = response.getSourceAsString();
+        long version = response.getVersion();
+
+        ElasticSourceDocument elasticSourceDocument = new ElasticSourceDocument(id, sourceAsString, version);
+
+        return elasticSourceDocument;
     }
 
     protected <E, R> E executeQuery(String indexName, String type, ElasticQueryBuilder<R> queryBuilder,
