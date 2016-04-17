@@ -25,7 +25,6 @@ public class DocumentOutboundCommand implements Serializable {
     private DocumentMetadata documentMetadata;
 
     private long subscriptionId;
-    private long matchQueryId;
 
     public DocumentOutboundCommand() {
         // Default constructor
@@ -49,16 +48,6 @@ public class DocumentOutboundCommand implements Serializable {
     public void setVersion(String version) {
 
         this.version = version;
-    }
-
-    public long getMatchQueryId() {
-
-        return this.matchQueryId;
-    }
-
-    public void setMatchQueryId(long matchQueryId) {
-
-        this.matchQueryId = matchQueryId;
     }
 
     public DocumentMetadata getDocumentMetadata() {

@@ -22,8 +22,6 @@ public class DocumentChangeNotification implements Serializable {
     private String documentId;
     private String documentVersion;
     private String documentInternalId;
-    private String documentInternalSequence;
-    private String documentCheckSum;
 
     private String documentAsJSON;
     private Long version;
@@ -33,15 +31,13 @@ public class DocumentChangeNotification implements Serializable {
     }
 
     public DocumentChangeNotification(ActionEnum action, String documentType, String documentId, String documentVersion,
-            String documentInternalId, String documentInternalSequence, String documentCheckSum, String documentAsJSON,
-            Long version) {
+            String documentInternalId, String documentAsJSON, Long version) {
+
         this.action = action;
         this.setDocumentType(documentType);
         this.documentId = documentId;
         this.documentVersion = documentVersion;
         this.documentInternalId = documentInternalId;
-        this.documentInternalSequence = documentInternalSequence;
-        this.setDocumentCheckSum(documentCheckSum);
         this.documentAsJSON = documentAsJSON;
         this.version = version;
     }
@@ -104,26 +100,6 @@ public class DocumentChangeNotification implements Serializable {
     public void setDocumentInternalId(String documentInternalId) {
 
         this.documentInternalId = documentInternalId;
-    }
-
-    public String getDocumentInternalSequence() {
-
-        return this.documentInternalSequence;
-    }
-
-    public void setDocumentInternalSequence(String documentInternalSequence) {
-
-        this.documentInternalSequence = documentInternalSequence;
-    }
-
-    public String getDocumentCheckSum() {
-
-        return this.documentCheckSum;
-    }
-
-    public void setDocumentCheckSum(String documentCheckSum) {
-
-        this.documentCheckSum = documentCheckSum;
     }
 
     public String getDocumentType() {

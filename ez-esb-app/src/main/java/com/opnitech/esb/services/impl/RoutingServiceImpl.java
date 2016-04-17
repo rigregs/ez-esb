@@ -37,8 +37,7 @@ public class RoutingServiceImpl implements RoutingService {
     @Override
     public void route(DocumentOutboundCommand documentOutboundCommand) throws ServiceException {
 
-        Subscription subscription = this.subscriptionRepository
-                .findSubscriptionOwnMatchQuery(documentOutboundCommand.getMatchQueryId());
+        Subscription subscription = this.subscriptionRepository.findOne(documentOutboundCommand.getSubscriptionId());
 
         if (subscription != null) {
             DocumentMetadata documentMetadata = documentOutboundCommand.getDocumentMetadata();
@@ -53,8 +52,7 @@ public class RoutingServiceImpl implements RoutingService {
             DocumentChangeNotification documentChangeNotification = new DocumentChangeNotification(
                     documentOutboundCommand.getAction(), documentOutboundCommand.getDocumentType(),
                     documentMetadata.getDocumentId(), documentOutboundCommand.getVersion(),
-                    documentMetadata.getElasticDocumentId(), documentMetadata.getSequence(),
-                    documentMetadata.getDocumentCheckSum(), elasticSourceDocument != null
+                    documentMetadata.getElasticDocumentId(), elasticSourceDocument != null
                             ? elasticSourceDocument.getObjectAsJSON()
                             : null,
                     elasticSourceDocument != null

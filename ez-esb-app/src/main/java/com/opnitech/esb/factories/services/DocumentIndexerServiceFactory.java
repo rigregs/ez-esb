@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.PercolatorRepository;
+import com.opnitech.esb.persistence.jpa.repository.consumer.SubscriptionRepository;
 import com.opnitech.esb.services.DocumentIndexerService;
 import com.opnitech.esb.services.cache.IndexMetadataCache;
 import com.opnitech.esb.services.impl.DocumentIndexerServiceImpl;
@@ -24,10 +25,12 @@ public class DocumentIndexerServiceFactory {
     @Bean
     public DocumentIndexerService getDocumentIndexerService(DocumentRepository documentRepository,
             DocumentMetadataRepository elasticIndexMetadataRepository, ProducerTemplate producerTemplate,
-            IndexMetadataCache indexMetadataCache, PercolatorRepository percolatorRepository) {
+            IndexMetadataCache indexMetadataCache, PercolatorRepository percolatorRepository,
+            SubscriptionRepository subscriptionRepository) {
 
         DocumentIndexerService documentIndexerService = new DocumentIndexerServiceImpl(documentRepository,
-                elasticIndexMetadataRepository, producerTemplate, indexMetadataCache, percolatorRepository);
+                elasticIndexMetadataRepository, producerTemplate, indexMetadataCache, percolatorRepository,
+                subscriptionRepository);
 
         return documentIndexerService;
     }

@@ -1,8 +1,10 @@
 package com.opnitech.esb.services.impl;
 
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +17,9 @@ import com.opnitech.esb.persistence.elastic.model.client.DocumentMetadata;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentMetadataRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
 import com.opnitech.esb.persistence.elastic.repository.document.PercolatorRepository;
+import com.opnitech.esb.persistence.jpa.model.consumer.MatchQuery;
+import com.opnitech.esb.persistence.jpa.model.consumer.Subscription;
+import com.opnitech.esb.persistence.jpa.repository.consumer.SubscriptionRepository;
 import com.opnitech.esb.persistence.rabbit.DocumentOutboundCommand;
 import com.opnitech.esb.services.DocumentIndexerService;
 import com.opnitech.esb.services.cache.IndexMetadataCache;
@@ -33,16 +38,19 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     private final ProducerTemplate producerTemplate;
     private final IndexMetadataCache indexMetadataCache;
     private final PercolatorRepository percolatorRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     public DocumentIndexerServiceImpl(DocumentRepository documentRepository,
             DocumentMetadataRepository documentMetadataRepository, ProducerTemplate producerTemplate,
-            IndexMetadataCache indexMetadataCache, PercolatorRepository percolatorRepository) {
+            IndexMetadataCache indexMetadataCache, PercolatorRepository percolatorRepository,
+            SubscriptionRepository subscriptionRepository) {
 
         this.documentRepository = documentRepository;
         this.documentMetadataRepository = documentMetadataRepository;
         this.producerTemplate = producerTemplate;
         this.indexMetadataCache = indexMetadataCache;
         this.percolatorRepository = percolatorRepository;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
     @Override
@@ -121,18 +129,42 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
         List<Long> matchIds = this.percolatorRepository.evaluatePercolator(elasticIndexMetadata.getIndexName(),
                 elasticIndexMetadata.getDocumentType(), documentCRUDCommand.getDocumentAsJSON());
 
+        Set<Long> processedMatchIdSubcription = new HashSet<>();
+
         for (Long matchId : matchIds) {
-            DocumentOutboundCommand documentOutboundCommand = new DocumentOutboundCommand();
-            documentOutboundCommand.setAction(documentCRUDCommand.getAction());
-            documentOutboundCommand.setDocumentType(elasticIndexMetadata.getDocumentType());
-            documentOutboundCommand.setVersion(elasticIndexMetadata.getVersion());
+            if (!processedMatchIdSubcription.contains(matchId)) {
 
-            documentOutboundCommand.setDocumentMetadata(documentMetadata);
+                Subscription subscription = this.subscriptionRepository.findSubscriptionOwnMatchQuery(matchId);
 
-            documentOutboundCommand.setMatchQueryId(matchId);
-
-            this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(OUTBOUND_SEND_CAMEL_ROUTE), documentOutboundCommand);
+                if (subscription != null) {
+                    registerProcessedMatchIdSubcription(processedMatchIdSubcription, subscription);
+                    sendNotification(documentCRUDCommand, elasticIndexMetadata, documentMetadata, subscription.getId());
+                }
+            }
         }
+    }
+
+    private void registerProcessedMatchIdSubcription(Set<Long> processedMatchIdSubcription, Subscription subscription) {
+
+        List<MatchQuery> matchQueries = subscription.getMatchQueries();
+        for (MatchQuery matchQuery : matchQueries) {
+            processedMatchIdSubcription.add(matchQuery.getId());
+        }
+    }
+
+    private void sendNotification(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
+            DocumentMetadata documentMetadata, long subscriptionId) {
+
+        DocumentOutboundCommand documentOutboundCommand = new DocumentOutboundCommand();
+        documentOutboundCommand.setAction(documentCRUDCommand.getAction());
+        documentOutboundCommand.setDocumentType(elasticIndexMetadata.getDocumentType());
+        documentOutboundCommand.setVersion(elasticIndexMetadata.getVersion());
+
+        documentOutboundCommand.setDocumentMetadata(documentMetadata);
+
+        documentOutboundCommand.setSubscriptionId(subscriptionId);
+
+        this.producerTemplate.sendBody(RouteBuilderUtil.fromDirect(OUTBOUND_SEND_CAMEL_ROUTE), documentOutboundCommand);
     }
 
     private void processDocument(DocumentCRUDCommand documentCRUDCommand, ElasticIndexMetadata elasticIndexMetadata,
