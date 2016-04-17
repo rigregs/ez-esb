@@ -48,7 +48,21 @@ public final class RouteBuilderUtil {
             @Override
             public void configure() throws Exception {
 
-                from(fromRouteURI).marshal().json(JsonLibrary.Jackson).log("Outbound: ${body}").to(toRouteURI);
+                String completeWithoutJSONMarshalRoute = fromDirect(
+                        new StringBuffer().append(fromRouteURI).append("_completeWithoutJSONMarshal").toString());
+
+                String completeWithJSONMarshalRoute = fromDirect(
+                        new StringBuffer().append(fromRouteURI).append("_completeWithJSONMarshal").toString());
+
+                String completeRoute = fromDirect(new StringBuffer().append(fromRouteURI).append("_complete").toString());
+
+                from(fromRouteURI).choice().when(simple("${body} is 'java.lang.String'")).to(completeWithoutJSONMarshalRoute)
+                        .otherwise().to(completeWithJSONMarshalRoute).end();
+
+                from(completeWithoutJSONMarshalRoute).to(completeRoute);
+                from(completeWithJSONMarshalRoute).marshal().json(JsonLibrary.Jackson).to(completeRoute);
+
+                from(completeRoute).log("Outbound: ${body}").to(toRouteURI);
             }
         };
 
@@ -61,36 +75,50 @@ public final class RouteBuilderUtil {
         final String toRouteURI = fromDirect(toURI);
 
         RouteBuilder routeBuilder = StringUtils.isBlank(transformationTemplate)
-                ? new RouteBuilder() {
+                ? createGroovyRouteBuilderWithoutTransformations(fromRouteURI, toRouteURI)
+                : createGroovyRouteBuilderWithTransformations(transformationTemplate, fromRouteURI, toRouteURI);
 
-                    @Override
-                    public void configure() throws Exception {
+        return routeBuilder;
+    }
 
-                        String logRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_log").toString());
-                        String notificationRoute = fromDirect(
-                                new StringBuffer().append(toRouteURI).append("_notification").toString());
+    private static RouteBuilder createGroovyRouteBuilderWithTransformations(final String transformationTemplate,
+            final String fromRouteURI, final String toRouteURI) {
 
-                        from(fromRouteURI).multicast().to(logRoute, notificationRoute);
+        RouteBuilder routeBuilder = new RouteBuilder() {
 
-                        from(logRoute).marshal().json(JsonLibrary.Jackson).log("Notification: ${body}");
-                        from(notificationRoute).to(toRouteURI);
-                    }
-                }
-                : new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
 
-                    @Override
-                    public void configure() throws Exception {
+                String logRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_log").toString());
+                String notificationRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_notification").toString());
 
-                        String logRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_log").toString());
-                        String notificationRoute = fromDirect(
-                                new StringBuffer().append(toRouteURI).append("_notification").toString());
+                from(fromRouteURI).multicast().to(logRoute, notificationRoute);
 
-                        from(fromRouteURI).multicast().to(logRoute, notificationRoute);
+                from(logRoute).marshal().json(JsonLibrary.Jackson).log("Notification: ${body}");
+                from(notificationRoute).setBody().groovy(transformationTemplate).to(toRouteURI);
+            }
+        };
 
-                        from(logRoute).marshal().json(JsonLibrary.Jackson).log("Notification: ${body}");
-                        from(notificationRoute).setBody().groovy(transformationTemplate).to(toRouteURI);
-                    }
-                };
+        return routeBuilder;
+    }
+
+    private static RouteBuilder createGroovyRouteBuilderWithoutTransformations(final String fromRouteURI,
+            final String toRouteURI) {
+
+        RouteBuilder routeBuilder = new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+
+                String logRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_log").toString());
+                String notificationRoute = fromDirect(new StringBuffer().append(toRouteURI).append("_notification").toString());
+
+                from(fromRouteURI).multicast().to(logRoute, notificationRoute);
+
+                from(logRoute).marshal().json(JsonLibrary.Jackson).log("Notification: ${body}");
+                from(notificationRoute).to(toRouteURI);
+            }
+        };
 
         return routeBuilder;
     }
