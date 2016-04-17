@@ -13,7 +13,7 @@ public class MatchAllElasticQueryBuilder<E> extends AbstractElasticQueryBuilder<
     }
 
     @Override
-    public MatchAllElasticQueryBuilder<E> and(String fieldName, Object value) {
+    public MatchAllElasticQueryBuilder<E> andTerm(String fieldName, Object value) {
 
         throw new IllegalStateException();
     }

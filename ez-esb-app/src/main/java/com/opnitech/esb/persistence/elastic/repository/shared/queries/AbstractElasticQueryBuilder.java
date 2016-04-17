@@ -30,10 +30,10 @@ public abstract class AbstractElasticQueryBuilder<E, Q extends QueryBuilder> imp
     }
 
     @Override
-    public ElasticQueryBuilder<E> andNotNull(String fieldName, Object value) {
+    public ElasticQueryBuilder<E> andTermNotNull(String fieldName, Object value) {
 
         if (value != null) {
-            and(fieldName, value);
+            andTerm(fieldName, value);
         }
 
         return this;

@@ -1,0 +1,16 @@
+{
+  "percolator-metadata": {
+    "properties": {
+      "consumerId": {
+        "type": "long"
+      },
+      "id": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      },
+      "percolatorId": {
+        "type": "long"
+      }
+    }
+  }
+}

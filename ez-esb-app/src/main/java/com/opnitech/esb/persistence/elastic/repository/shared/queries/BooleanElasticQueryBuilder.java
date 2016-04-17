@@ -15,7 +15,7 @@ public class BooleanElasticQueryBuilder<E> extends AbstractElasticQueryBuilder<E
     }
 
     @Override
-    public BooleanElasticQueryBuilder<E> and(String fieldName, Object value) {
+    public BooleanElasticQueryBuilder<E> andTerm(String fieldName, Object value) {
 
         BaseQueryBuilder matchQuery = QueryBuilders.termQuery(fieldName, value);
 
@@ -27,6 +27,8 @@ public class BooleanElasticQueryBuilder<E> extends AbstractElasticQueryBuilder<E
     @Override
     protected BoolQueryBuilder createQueryBuilder() {
 
-        return new BoolQueryBuilder();
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+        return boolQueryBuilder;
     }
 }

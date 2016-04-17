@@ -13,6 +13,8 @@ import com.opnitech.esb.configuration.route.RabbitRouteConfiguration;
  */
 public final class RouteBuilderUtil {
 
+    private static final String RABBITMQ_ROUTE_PLACEHOLDER = "rabbitmq://{0}:{1}/{2}?username={3}&password={4}&threadPoolSize={5}&routingKey={6}&queue={7}&vhost={8}&autoDelete={9}";
+
     private RouteBuilderUtil() {
         // Default constructor
     }
@@ -130,13 +132,12 @@ public final class RouteBuilderUtil {
 
     private static String buildRabbitRoute(RabbitRouteConfiguration rabbitRouteConfiguration) {
 
-        final String routeURI = MessageFormat.format(
-                "rabbitmq://{0}:{1}/{2}?username={3}&password={4}&threadPoolSize={5}&routingKey={6}&queue={7}&vhost={8}&autoDelete={9}",
-                rabbitRouteConfiguration.getHost(), Integer.toString(rabbitRouteConfiguration.getPort()),
-                rabbitRouteConfiguration.getExchangeName(), rabbitRouteConfiguration.getUsername(),
-                rabbitRouteConfiguration.getPassword(), Integer.toString(rabbitRouteConfiguration.getThreadPoolSize()),
-                rabbitRouteConfiguration.getRoutingKey(), rabbitRouteConfiguration.getQueue(),
-                rabbitRouteConfiguration.getVhost(), rabbitRouteConfiguration.isAutoDelete());
+        final String routeURI = MessageFormat.format(RABBITMQ_ROUTE_PLACEHOLDER, rabbitRouteConfiguration.getHost(),
+                Integer.toString(rabbitRouteConfiguration.getPort()), rabbitRouteConfiguration.getExchangeName(),
+                rabbitRouteConfiguration.getUsername(), rabbitRouteConfiguration.getPassword(),
+                Integer.toString(rabbitRouteConfiguration.getThreadPoolSize()), rabbitRouteConfiguration.getRoutingKey(),
+                rabbitRouteConfiguration.getQueue(), rabbitRouteConfiguration.getVhost(),
+                rabbitRouteConfiguration.isAutoDelete());
 
         return routeURI;
     }

@@ -3,6 +3,7 @@ package com.opnitech.esb.services.cache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.opnitech.esb.client.exception.ServiceException;
 import com.opnitech.esb.common.data.ElasticIndexMetadata;
 import com.opnitech.esb.persistence.elastic.repository.document.DocumentRepository;
 
@@ -20,7 +21,7 @@ public class IndexMetadataCache {
         this.documentRepository = documentRepository;
     }
 
-    public void guaranteeIndexExists(ElasticIndexMetadata elasticIndexMetadata) {
+    public void guaranteeIndexExists(ElasticIndexMetadata elasticIndexMetadata) throws ServiceException {
 
         if (!this.elasticIndexMetadatas.containsKey(elasticIndexMetadata)) {
             this.documentRepository.createIndex(elasticIndexMetadata.getIndexName());

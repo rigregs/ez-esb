@@ -56,9 +56,12 @@ public class DocumentIndexerServiceImpl implements DocumentIndexerService {
     }
 
     @Override
-    public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON) {
+    public void queueUpdateDocument(String version, String documentType, String documentId, String documentAsJSON)
+            throws ServiceException {
 
         ElasticIndexMetadata elasticIndexMetadata = new ElasticIndexMetadata(version, documentType);
+
+        this.indexMetadataCache.guaranteeIndexExists(elasticIndexMetadata);
 
         DocumentMetadata documentMetadata = resolveElasticDocumentMetadata(false, elasticIndexMetadata, documentId);
 

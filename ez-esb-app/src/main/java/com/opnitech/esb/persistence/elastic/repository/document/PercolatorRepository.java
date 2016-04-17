@@ -30,7 +30,7 @@ public class PercolatorRepository extends ElasticRepository {
 
         ElasticQueryBuilder<PercolatorMetadata> builder = ElasticQueryBuilderFactory.booleanBuilder(PercolatorMetadata.class);
 
-        builder.andNotNull("consumerId", consumerId);
+        builder.andTermNotNull("consumerId", consumerId);
 
         builder.withAllElements();
 

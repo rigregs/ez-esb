@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -21,6 +22,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 import com.opnitech.esb.client.exception.ServiceException;
+import com.opnitech.esb.client.util.FileUtils;
 import com.opnitech.esb.client.util.JSONUtil;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticDocument;
 import com.opnitech.esb.persistence.elastic.model.shared.ElasticSourceDocument;
@@ -42,11 +44,25 @@ public abstract class ElasticRepository {
         this.client = elasticsearchTemplate.getClient();
     }
 
-    public void createIndex(String indexName) {
+    public void createIndex(String indexName) throws ServiceException {
 
         if (!this.elasticsearchTemplate.indexExists(indexName)) {
-            this.elasticsearchTemplate.createIndex(indexName);
+            // this.elasticsearchTemplate.createIndex(indexName);
+
+            CreateIndexRequestBuilder createIndexRequestBuilder = this.client.admin().indices().prepareCreate(indexName);
+
+            updateIndexMapping(createIndexRequestBuilder, "mappings/document-metadata.json", "metadata");
+            updateIndexMapping(createIndexRequestBuilder, "mappings/percolator-metadata.json", "percolator-metadata");
+
+            createIndexRequestBuilder.execute().actionGet();
         }
+    }
+
+    private void updateIndexMapping(CreateIndexRequestBuilder createIndexRequestBuilder, String mappingFile, String type)
+            throws ServiceException {
+
+        String mapping = FileUtils.readFile(mappingFile);
+        createIndexRequestBuilder.addMapping(type, mapping);
     }
 
     public List<Long> evaluatePercolator(String indexName, String type, String objectAsJSON) throws ServiceException {

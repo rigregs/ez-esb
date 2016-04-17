@@ -27,7 +27,7 @@ public class DocumentMetadataRepository extends ElasticRepository {
 
         ElasticQueryBuilder<DocumentMetadata> builder = ElasticQueryBuilderFactory.booleanBuilder(DocumentMetadata.class);
 
-        builder.andNotNull("documentId", id);
+        builder.andTermNotNull("documentId", id);
 
         builder.withAllElements();
 

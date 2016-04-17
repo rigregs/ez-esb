@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ElasticQueryBuilder<E> {
 
-    ElasticQueryBuilder<E> andNotNull(String fieldName, Object value);
+    ElasticQueryBuilder<E> andTermNotNull(String fieldName, Object value);
 
-    ElasticQueryBuilder<E> and(String fieldName, Object value);
+    ElasticQueryBuilder<E> andTerm(String fieldName, Object value);
 
     ElasticQueryBuilder<E> withAllElements();
 

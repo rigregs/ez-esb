@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "properties": {
+      "documentCheckSum": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      },
+      "documentId": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      },
+      "elasticDocumentId": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      },
+      "id": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      },
+      "sequence": {
+        "type": "string",
+        "index_analyzer": "keyword"
+      }
+    }
+  }
+}
