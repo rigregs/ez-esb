@@ -1,9 +1,7 @@
 package com.opnitech.esb.factories.rabbit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.common.inject.Singleton;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,9 +16,6 @@ import com.opnitech.esb.utils.RouteBuilderUtil;
 
 @Configuration
 public class InboundRabbitRouteFactory {
-
-    @Autowired
-    CamelContext camelContext;
 
     public InboundRabbitRouteFactory() {
         // Default constructor
