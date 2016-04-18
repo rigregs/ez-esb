@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.events.OutboundMessageConsumer;
+import com.opnitech.esb.factories.rabbit.RabbitRouteConstants;
 import com.opnitech.esb.services.RoutingService;
 
 /**
@@ -18,7 +19,7 @@ public class OutboundMessageConsumerFactory {
     }
 
     @Singleton
-    @Bean(name = "outboundMessageConsumer")
+    @Bean(name = RabbitRouteConstants.OUTBOUND_MESSAGE_CONSUMER)
     public OutboundMessageConsumer getOutboundMessageConsumer(RoutingService routingService) {
 
         OutboundMessageConsumer outboundMessageConsumer = new OutboundMessageConsumer(routingService);

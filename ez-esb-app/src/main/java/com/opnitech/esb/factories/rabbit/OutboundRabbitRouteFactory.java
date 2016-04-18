@@ -39,8 +39,9 @@ public class OutboundRabbitRouteFactory {
     @Singleton
     public RouteBuilder getOutboundReceiveRouteBuilder(PropertyPlaceholder propertyPlaceholder) {
 
-        RouteBuilder routeBuilder = RouteBuilderUtil.createReceiveRabbitRouteBuilder("outboundMessageConsumer",
-                propertyPlaceholder.getOutboundRoute(), DocumentOutboundCommand.class);
+        RouteBuilder routeBuilder = RouteBuilderUtil.createReceiveRabbitRouteBuilder(
+                RabbitRouteConstants.OUTBOUND_MESSAGE_CONSUMER, propertyPlaceholder.getOutboundRoute(),
+                DocumentOutboundCommand.class);
 
         return routeBuilder;
     }

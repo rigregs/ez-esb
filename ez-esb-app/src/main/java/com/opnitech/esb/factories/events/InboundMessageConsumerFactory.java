@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.opnitech.esb.events.InboundMessageConsumer;
+import com.opnitech.esb.factories.rabbit.RabbitRouteConstants;
 import com.opnitech.esb.services.DocumentIndexerService;
 
 /**
@@ -18,7 +19,7 @@ public class InboundMessageConsumerFactory {
     }
 
     @Singleton
-    @Bean(name = "inboundMessageConsumer")
+    @Bean(name = RabbitRouteConstants.INBOUND_MESSAGE_CONSUMER)
     public InboundMessageConsumer getInboundMessageConsumer(DocumentIndexerService documentIndexerService) {
 
         InboundMessageConsumer inboundMessageConsumer = new InboundMessageConsumer(documentIndexerService);
