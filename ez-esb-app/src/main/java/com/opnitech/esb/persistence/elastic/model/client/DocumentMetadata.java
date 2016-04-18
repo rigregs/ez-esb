@@ -12,6 +12,8 @@ import com.opnitech.esb.persistence.elastic.model.shared.ElasticDocument;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DocumentMetadata extends ElasticDocument {
 
+    public static final String DOCUMENT_ID_PROPERTY = "documentId";
+
     private String elasticDocumentId;
     private String documentId;
     private String documentCheckSum;

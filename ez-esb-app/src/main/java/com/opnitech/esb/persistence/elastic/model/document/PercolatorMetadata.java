@@ -12,6 +12,8 @@ import com.opnitech.esb.persistence.elastic.model.shared.ElasticDocument;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PercolatorMetadata extends ElasticDocument {
 
+    public static final String CONSUMER_ID_PROPERTY = "consumerId";
+
     private long consumerId;
     private long percolatorId;
 

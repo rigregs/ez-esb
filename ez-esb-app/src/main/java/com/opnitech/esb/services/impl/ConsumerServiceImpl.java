@@ -55,6 +55,11 @@ public class ConsumerServiceImpl implements ConsumerService {
         Consumer consumer = this.consumerRepository.findOne(consumerId);
         Validate.notNull(consumer);
 
+        synchConsumerConfiguration(consumer);
+    }
+
+    private void synchConsumerConfiguration(Consumer consumer) throws ServiceException {
+
         List<Subscription> subscriptions = consumer.getSubscriptions();
         if (CollectionUtils.isNotEmpty(subscriptions)) {
             for (Subscription subscription : subscriptions) {
